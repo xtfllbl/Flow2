@@ -1,0 +1,46 @@
+#ifndef QJDMAINWINDOW_H
+#define QJDMAINWINDOW_H
+
+#include <QMainWindow>
+#include "widget/qjdlabel.h"
+#include "widget/qjdpropertywidget.h"
+#include "widget/qjdtreewidget.h"
+#include "widget/qjdfuncationwidget.h"
+#include "widget/qjdtabwidget.h"
+#include "widget/qjdmdi.h"
+
+namespace Ui {
+class QJDMainWindow;
+}
+
+class QJDMainWindow : public QMainWindow
+{
+    Q_OBJECT
+    
+public:
+    explicit QJDMainWindow(QWidget *parent = 0);
+    ~QJDMainWindow();
+    
+private slots:
+
+    void on_actionExit_triggered();
+    void setWidgetVisible(int);
+
+private:
+    Ui::QJDMainWindow *ui;
+
+    QHash<QString ,QString> stringPath;
+    QJDTreeWidget *areaWidget;
+    QJDTabWidget *tabWidget;
+    QJDPropertyWidget *propertyWidget;
+    QJDMdi *mdiWidget;
+    QJDFuncationWidget *functionWidget;
+    QJDLabel *pathLabel1;
+    QJDLabel *pathLabel2;
+
+    void setDir();
+    void setAreaWidget(QString areaString,QString areaPath,QStringList lineStringList,QStringList linePath,
+                       QStringList flowStringList,QStringList flowPath);
+};
+
+#endif // QJDMAINWINDOW_H

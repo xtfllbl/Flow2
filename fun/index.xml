@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE index>
+<index version="1.0">
+<modulegroup name="IO">
+<module name="Data Input" version="1.0">
+    <path>modules/IO/datain.xml</path>
+    <desc>This is a data input module. </desc>
+     <type>Data IO</type>
+</module>
+</modulegroup>
+
+<modulegroup name="Process">
+<module name="ReSample" version="1.0">
+    <path>/xml/Process/modules/resample.xml</path>
+    <desc>This is a resample module.</desc>
+    <type>Data Process</type>
+</module>
+<module name="FirstBreakAutoPick" version="1.0">
+    <path>modules/Process/FirstBreakAutoPick.xml</path>
+    <desc>This is a auto pick module. </desc>
+    <type>Data Process</type>
+</module>
+<module name="AbnormalTraceScan" version="1.0">
+    <path>modules/Process/AbnormalTraceScan.xml</path>
+    <desc>This is a AbnormalTraceScan module. </desc>
+    <type>Data Process</type>
+</module>
+<module name="ShotAttributesExtraction" version="1.0">
+    <path>modules/Process/ShotAttributesExtraction.xml</path>
+    <desc>This is a ShotAttributesExtraction module. </desc>
+    <type>Data Process</type>
+</module>
+</modulegroup>
+
+<modulegroup name="Display">
+<module name="TraceDisplay" version="1.0">
+    <path>modules/Display/TraceDisplay.xml</path>
+    <desc>This is a ShotAttributesExtraction module. </desc>
+    <type>Data Process</type>
+</module>
+</modulegroup>
+
+</index>
