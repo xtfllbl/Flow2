@@ -2,9 +2,10 @@
 #define QJDMAINWINDOW_H
 
 #include <QMainWindow>
+#include <QSplitter>
 #include "widget/qjdlabel.h"
 #include "widget/qjdpropertywidget.h"
-#include "widget/qjdtreewidget.h"
+#include "widget/qjdareawidget.h"
 #include "widget/qjdfuncationwidget.h"
 #include "widget/qjdtabwidget.h"
 #include "widget/qjdmdi.h"
@@ -30,13 +31,15 @@ private:
     Ui::QJDMainWindow *ui;
 
     QHash<QString ,QString> stringPath;
-    QJDTreeWidget *areaWidget;
+    QJDAreaWidget *areaWidget;
     QJDTabWidget *tabWidget;
     QJDPropertyWidget *propertyWidget;
     QJDMdi *mdiWidget;
-    QJDFuncationWidget *functionWidget;
+    QJDFuncationWidget *funcationWidget;
     QJDLabel *pathLabel1;
     QJDLabel *pathLabel2;
+    QSplitter *splitter;
+
 
     void setDir();
     void setAreaWidget(QString areaString,QString areaPath,QStringList lineStringList,QStringList linePath,

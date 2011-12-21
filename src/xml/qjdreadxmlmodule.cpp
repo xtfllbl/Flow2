@@ -1,8 +1,8 @@
-#include "readxmlmodule.h"
+#include "qjdreadxmlmodule.h"
 #include <QMessageBox>
 #include <QtXml>
 
-readXMLModule::readXMLModule(QObject *parent) :
+QJDReadXMLModule::QJDReadXMLModule(QObject *parent) :
     QObject(parent)
 {
     // init
@@ -16,7 +16,7 @@ readXMLModule::readXMLModule(QObject *parent) :
     hasOption=false;
 }
 
-void readXMLModule::nodeClear()
+void QJDReadXMLModule::nodeClear()
 {
     hasProperty=false;
     hasDesc=false;
@@ -40,11 +40,8 @@ void readXMLModule::nodeClear()
     hidetype.clear();
 }
 
-void readXMLModule::setXML(QIODevice */*d*/)
-{
-}
 
-bool readXMLModule::read(QIODevice *device)
+bool QJDReadXMLModule::read(QIODevice *device)
 {
     QString errorStr;
     int errorLine;
@@ -98,7 +95,7 @@ bool readXMLModule::read(QIODevice *device)
 }
 
 /// 在这里要处理多种类型的控件，还要分开进行处理
-void readXMLModule::parsePropertyElement(const QDomElement &element)
+void QJDReadXMLModule::parsePropertyElement(const QDomElement &element)
 {
 //    qDebug()<<"parsePropertyElement";
     hasProperty=true;

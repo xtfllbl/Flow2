@@ -28,42 +28,50 @@ QJDMainWindow::QJDMainWindow(QWidget *parent) :
     pathLabel2->setFrameShadow(QFrame::Raised);
     pathLabel2->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Preferred);
 
-    areaWidget=new QJDTreeWidget;
+//    QWidget *areaSplitterWidget=new QWidget();  // 每个模块的那个小widget
+//    QWidget *tabSplitterWidget=new QWidget();
+//    QWidget *funcationSplitterWidget=new QWidget();
+
+    areaWidget=new QJDAreaWidget();
     areaWidget->setColumnCount(1);
 
     propertyWidget=new QJDPropertyWidget;
     mdiWidget=new QJDMdi;
 
-    tabWidget=new QJDTabWidget;
+    tabWidget=new QJDTabWidget();
     QWidget *tab1=new QWidget;
     QGridLayout *gLayout1=new QGridLayout(tab1);
     gLayout1->addWidget(propertyWidget);
     tabWidget->addTab(tab1, "Property Viewer");
-
     QWidget *tab2=new QWidget;
     QGridLayout *gLayout2=new QGridLayout(tab2);
     gLayout2->addWidget(mdiWidget);
     tabWidget->addTab(tab2, "Flow Editor");
-
     connect(tabWidget,SIGNAL(currentChanged(int)),this,SLOT(setWidgetVisible(int)));
 
-    functionWidget=new QJDFuncationWidget;
-    functionWidget->setVisible(false);
+    funcationWidget=new QJDFuncationWidget();
+    funcationWidget->setVisible(false);
+
+    splitter=new QSplitter(this);
+    splitter->setOrientation(Qt::Horizontal);
+    splitter->setChildrenCollapsible(false);
+    splitter->addWidget(areaWidget);
+    splitter->addWidget(tabWidget);
+    splitter->addWidget(funcationWidget);
 
     setDir();
     QHBoxLayout *pathLayout=new QHBoxLayout;
     pathLayout->addWidget(pathLabel1);
     pathLayout->addWidget(pathLabel2);
 
-    QHBoxLayout *hLayout=new QHBoxLayout;
-    hLayout->addWidget(areaWidget);
-    hLayout->addWidget(tabWidget);
-//    hLayout->addWidget(propertyWidget);  // 不是应该在tabwidget里面么
-    hLayout->addWidget(functionWidget);
+//    QHBoxLayout *hLayout=new QHBoxLayout;
+//    hLayout->addWidget(areaWidget);
+//    hLayout->addWidget(tabWidget);
+//    hLayout->addWidget(functionWidget);
 
     QVBoxLayout *vLayout=new QVBoxLayout;
     vLayout->addLayout(pathLayout);
-    vLayout->addLayout(hLayout);
+    vLayout->addWidget(splitter);
 
     ui->centralWidget->setLayout(vLayout);
 
@@ -205,10 +213,10 @@ void QJDMainWindow::setWidgetVisible(int tabIndex)
 //    qDebug()<<tabIndex;
     if(tabIndex==0)  // Property
     {
-        functionWidget->setVisible(false);
+        funcationWidget->setVisible(false);
     }
     if(tabIndex==1)  // Flow
     {
-        functionWidget->setVisible(true);
+        funcationWidget->setVisible(true);
     }
 }

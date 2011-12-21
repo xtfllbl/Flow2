@@ -20,20 +20,26 @@ SOURCES += main.cpp\
     src/widget/qjdmdi.cpp \
     src/widget/qjdpropertywidget.cpp \
     src/widget/qjdtabwidget.cpp \
-    src/widget/qjdtreewidget.cpp \
+    src/widget/qjdareawidget.cpp \
     src/widget/qjdlabel.cpp \
     src/widget/qjdfuncationwidget.cpp \
-    src/xml/readxmlmodule.cpp \
-    src/xml/readxmlindex.cpp
+    src/xml/qjdreadxmlmodule.cpp \
+    src/xml/qjdreadxmlindex.cpp \
+    src/qjdargu.cpp \
+    src/widget/qjdareaheadwidget.cpp \
+    src/widget/qjdfuncationheadwidget.cpp
 
 HEADERS  += src/qjdmainwindow.h \
     src/widget/qjdmdi.h \
     src/widget/qjdpropertywidget.h \
     src/widget/qjdtabwidget.h \
-    src/widget/qjdtreewidget.h \
+    src/widget/qjdareawidget.h \
     src/widget/qjdlabel.h \
     src/widget/qjdfuncationwidget.h \
-    src/xml/readxmlmodule.h \
-    src/xml/readxmlindex.h
+    src/xml/qjdreadxmlmodule.h \
+    src/xml/qjdreadxmlindex.h \
+    src/qjdargu.h \
+    src/widget/qjdareaheadwidget.h \
+    src/widget/qjdfuncationheadwidget.h
 
 FORMS    += src/qjdmainwindow.ui

@@ -1,28 +1,28 @@
-#include "readxmlindex.h"
+#include "qjdreadxmlindex.h"
 
-readXMLIndex::readXMLIndex(QObject *parent) :
+QJDReadXMLIndex::QJDReadXMLIndex(QObject *parent) :
     QObject(parent)
 {
     allModuleName.clear();
-    allModuleVersion.clear();
+    allModuleGroup.clear();
     allModulePath.clear();
     allModuleType.clear();
 }
 
-void readXMLIndex::setXML(QIODevice */*d*/)
-{}
 
-void readXMLIndex::nodeClear()
+
+void QJDReadXMLIndex::nodeClear()
 {
     name.clear();
-    version.clear();
+    group.clear();
     path.clear();
     desc.clear();
     type.clear();
 }
 
-bool readXMLIndex::read(QIODevice *device)
+bool QJDReadXMLIndex::read(QIODevice *device)
 {
+//    qDebug()<<"read";
     QString errorStr;
     int errorLine;
     int errorColumn;
@@ -46,26 +46,26 @@ bool readXMLIndex::read(QIODevice *device)
         return false;
     }
 
-    QDomElement modulegroup = root.firstChildElement("modulegroup");
-    QDomElement child=modulegroup.firstChildElement("module");
+    /// 这里要改变了,因为为各个模块进行分组了
+//    QDomElement modulegroup = root.firstChildElement("modulegroup");  // 不需要这一行了
+    QDomElement child=root.firstChildElement("module");
     /// 只处理property,当中有其他的可不行，例如隐藏之类的
     while (!child.isNull())
     {
         nodeClear();  //清理节点包含信息
         name = child.attribute("name");
-        version = child.attribute("version");
+        group = child.attribute("group");
         parsePropertyElement(child);
 
-        setModuleName(name,version,path,desc,type);
-//        qDebug()<<"readIndexXML::"<<name<<version<<path<<desc<<type;
+        setModule(name,group,path,desc,type);
+//        qDebug()<<"readIndexXML::"<<name<<group<<path<<desc<<type;
         child = child.nextSiblingElement("module");
     }
-
     return true;
 }
 
 
-void readXMLIndex::parsePropertyElement(const QDomElement &element)
+void QJDReadXMLIndex::parsePropertyElement(const QDomElement &element)
 {
     QDomElement child = element.firstChildElement();
     while (!child.isNull())
@@ -90,37 +90,37 @@ void readXMLIndex::parsePropertyElement(const QDomElement &element)
     }
 }
 
-void readXMLIndex::setModuleName(QString moduleName, QString moduleVersion,
+void QJDReadXMLIndex::setModule(QString moduleName, QString moduleGroup,
                                  QString modulePath, QString moduleDesc, QString moduleType)
 {
     allModuleName.append(moduleName);
-    allModuleVersion.append(moduleVersion);
+    allModuleGroup.append(moduleGroup);
     allModulePath.append(modulePath);
     allModuleDesc.append(moduleDesc);
     allModuleType.append(moduleType);
 }
 
-QStringList readXMLIndex::getModuleName()
+QStringList QJDReadXMLIndex::getModuleName()
 {
     return allModuleName;
 }
 
-QStringList readXMLIndex::getModuleVersion()
+QStringList QJDReadXMLIndex::getModuleGroup()
 {
-    return allModuleVersion;
+    return allModuleGroup;
 }
 
-QStringList readXMLIndex::getModulePath()
+QStringList QJDReadXMLIndex::getModulePath()
 {
     return allModulePath;
 }
 
-QStringList readXMLIndex::getModuleDesc()
+QStringList QJDReadXMLIndex::getModuleDesc()
 {
     return allModuleDesc;
 }
 
-QStringList readXMLIndex::getModuleType()
+QStringList QJDReadXMLIndex::getModuleType()
 {
     return allModuleType;
 }

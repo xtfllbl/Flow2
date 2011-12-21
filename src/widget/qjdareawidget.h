@@ -4,11 +4,11 @@
 #include <QTreeWidget>
 
 // It is impossible to put the modle here too
-class QJDTreeWidget : public QTreeWidget
+class QJDAreaWidget : public QTreeWidget
 {
     Q_OBJECT
 public:
-    QJDTreeWidget();
+    QJDAreaWidget();
 private:
 
 signals:

@@ -1,6 +1,6 @@
-#include "qjdtreewidget.h"
+#include "qjdareawidget.h"
 #include <QDebug>
-QJDTreeWidget::QJDTreeWidget()
+QJDAreaWidget::QJDAreaWidget()
 {
     this->setAnimated(true);
 
@@ -8,7 +8,7 @@ QJDTreeWidget::QJDTreeWidget()
     this->setHeaderLabel("Folders:");
 }
 
-void QJDTreeWidget::itemPath(QTreeWidgetItem *item)
+void QJDAreaWidget::itemPath(QTreeWidgetItem *item)
 {
     QString path=item->toolTip(0);
     emit sigItemPath(path);

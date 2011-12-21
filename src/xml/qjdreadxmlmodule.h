@@ -4,11 +4,11 @@
 #include <QObject>
 #include <QIODevice>
 #include <QtXml>
-class readXMLModule : public QObject
+class QJDReadXMLModule : public QObject
 {
     Q_OBJECT
 public:
-    explicit readXMLModule(QObject *parent = 0);
+    explicit QJDReadXMLModule(QObject *parent = 0);
 
 signals:    
     // 发送节点信息
@@ -21,7 +21,6 @@ signals:
 
 
 public slots:
-    void setXML(QIODevice *d);
     bool read(QIODevice *device);
     void parsePropertyElement(const QDomElement &element);
 
