@@ -16,7 +16,6 @@ signals:
 
 public slots:
     void itemPath(QTreeWidgetItem*);
-
 };
 
 #endif // QJDTREEVIEW_H

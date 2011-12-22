@@ -28,10 +28,7 @@ QJDMainWindow::QJDMainWindow(QWidget *parent) :
     pathLabel2->setFrameShadow(QFrame::Raised);
     pathLabel2->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Preferred);
 
-//    QWidget *areaSplitterWidget=new QWidget();  // 每个模块的那个小widget
-//    QWidget *tabSplitterWidget=new QWidget();
-//    QWidget *funcationSplitterWidget=new QWidget();
-
+    areaHeadWidget=new QJDAreaHeadWidget;
     areaWidget=new QJDAreaWidget();
     areaWidget->setColumnCount(1);
 
@@ -39,6 +36,7 @@ QJDMainWindow::QJDMainWindow(QWidget *parent) :
     mdiWidget=new QJDMdi;
 
     tabWidget=new QJDTabWidget();
+//    tabWidget->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Expanding);
     QWidget *tab1=new QWidget;
     QGridLayout *gLayout1=new QGridLayout(tab1);
     gLayout1->addWidget(propertyWidget);
@@ -49,15 +47,28 @@ QJDMainWindow::QJDMainWindow(QWidget *parent) :
     tabWidget->addTab(tab2, "Flow Editor");
     connect(tabWidget,SIGNAL(currentChanged(int)),this,SLOT(setWidgetVisible(int)));
 
+    funcationHeadWidget=new QJDFuncationHeadWidget;
     funcationWidget=new QJDFuncationWidget();
-    funcationWidget->setVisible(false);
+
+    areaSplitterWidget=new QWidget;
+    funcationSplitterWidget=new QWidget;
+    QVBoxLayout *areaLayout=new QVBoxLayout(areaSplitterWidget);
+    QVBoxLayout *funcationLayout=new QVBoxLayout(funcationSplitterWidget);
+    areaLayout->addWidget(areaHeadWidget);
+    areaLayout->addWidget(areaWidget);
+    funcationLayout->addWidget(funcationHeadWidget);
+    funcationLayout->addWidget(funcationWidget);
 
     splitter=new QSplitter(this);
     splitter->setOrientation(Qt::Horizontal);
     splitter->setChildrenCollapsible(false);
-    splitter->addWidget(areaWidget);
+    splitter->addWidget(areaSplitterWidget);
     splitter->addWidget(tabWidget);
-    splitter->addWidget(funcationWidget);
+    splitter->addWidget(funcationSplitterWidget);
+
+//    areaSplitterWidget->show();
+//    tabWidget->show();
+    funcationSplitterWidget->hide();
 
     setDir();
     QHBoxLayout *pathLayout=new QHBoxLayout;
@@ -77,6 +88,10 @@ QJDMainWindow::QJDMainWindow(QWidget *parent) :
 
     connect(areaWidget,SIGNAL(sigItemPath(QString)),pathLabel2,SLOT(setText(QString)));
     connect(areaWidget,SIGNAL(sigItemPath(QString)),propertyWidget,SLOT(setPropertyData(QString)));
+    connect(areaHeadWidget,SIGNAL(sigExpandClicked()),areaWidget,SLOT(expandAll()));
+    connect(areaHeadWidget,SIGNAL(sigCollapseClicked()),areaWidget,SLOT(collapseAll()));
+    connect(funcationHeadWidget,SIGNAL(sigExpandClicked()),funcationWidget,SLOT(expandAll()));
+    connect(funcationHeadWidget,SIGNAL(sigCollapseClicked()),funcationWidget,SLOT(collapseAll()));
 
     showMaximized();
 }
@@ -210,13 +225,12 @@ void QJDMainWindow::on_actionExit_triggered()
 
 void QJDMainWindow::setWidgetVisible(int tabIndex)
 {
-//    qDebug()<<tabIndex;
     if(tabIndex==0)  // Property
     {
-        funcationWidget->setVisible(false);
+        funcationSplitterWidget->hide();
     }
     if(tabIndex==1)  // Flow
     {
-        funcationWidget->setVisible(true);
+        funcationSplitterWidget->show();
     }
 }

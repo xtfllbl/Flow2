@@ -3,7 +3,7 @@
 
 QJDFuncationWidget::QJDFuncationWidget()
 {
-    this->setHeaderLabel("Funcation List:");
+    this->setHeaderHidden(true);
     this->setAnimated(true);
 
     readIndexXML=new QJDReadXMLIndex;
@@ -27,6 +27,7 @@ void QJDFuncationWidget::analysisIndexXML()
 
 void QJDFuncationWidget::setWidgetData()
 {
+    qDebug()<<"QJDFuncationWidget::setWidgetData()";
      allModuleName=readIndexXML->getModuleName();
      allModuleGroup=readIndexXML->getModuleGroup();
      allModulePath=readIndexXML->getModulePath();

@@ -9,6 +9,8 @@
 #include "widget/qjdfuncationwidget.h"
 #include "widget/qjdtabwidget.h"
 #include "widget/qjdmdi.h"
+#include "widget/qjdareaheadwidget.h"
+#include "widget/qjdfuncationheadwidget.h"
 
 namespace Ui {
 class QJDMainWindow;
@@ -23,7 +25,6 @@ public:
     ~QJDMainWindow();
     
 private slots:
-
     void on_actionExit_triggered();
     void setWidgetVisible(int);
 
@@ -32,10 +33,15 @@ private:
 
     QHash<QString ,QString> stringPath;
     QJDAreaWidget *areaWidget;
+    QJDAreaHeadWidget *areaHeadWidget;
+    QWidget *areaSplitterWidget;
+
     QJDTabWidget *tabWidget;
     QJDPropertyWidget *propertyWidget;
     QJDMdi *mdiWidget;
     QJDFuncationWidget *funcationWidget;
+    QJDFuncationHeadWidget *funcationHeadWidget;
+    QWidget *funcationSplitterWidget;
     QJDLabel *pathLabel1;
     QJDLabel *pathLabel2;
     QSplitter *splitter;
