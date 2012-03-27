@@ -1,0 +1,8 @@
+1
+/home/xtf/Project/Flow2/flow
+/home/xtf/Data/2/line1/flow1/log/flow199
+Data Input|infilename=/home/lub/data/envrtest/0304-8bit;
+FirstBreakAutoPick|jdthpath=null;minvelo=1500;maxvel=2000;tw=50;smooth=1;isoutput=1;pickFileName=/home/lub/program/qt/flow/pick2.pick;
+TraceDisplay|jdthpath=null;
+Data Input|infilename=/home/lub/data/envrtest/0304-8bit;
+Data Input|infilename=/home/lub/data/envrtest/0304-8bit;
