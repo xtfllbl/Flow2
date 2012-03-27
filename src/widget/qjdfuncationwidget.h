@@ -15,7 +15,8 @@ public:
     QJDReadXMLIndex *readIndexXML;
     QJDArgu *argu;
     QFile fileXMLIndex;
-
+signals:
+    void sigFunDoubleClicked(QString name,QString path);
 private:
     QStringList allModuleName;
     QStringList allModuleGroup;
@@ -28,6 +29,7 @@ private:
 
     void setWidgetData();
 
+    void mouseDoubleClickEvent(QMouseEvent *event);
 
 };
 

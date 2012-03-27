@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 #include <QSplitter>
-#include "widget/qjdlabel.h"
+#include "widget/QJD/qjdlabel.h"
 #include "widget/qjdpropertywidget.h"
 #include "widget/qjdareawidget.h"
 #include "widget/qjdfuncationwidget.h"
@@ -27,10 +27,19 @@ public:
 private slots:
     void on_actionExit_triggered();
     void setWidgetVisible(int);
+    void on_actionNewArea_triggered();
+    void on_actionNewLine_triggered();
+    void on_actionNewFlow_triggered();
+    void on_actionSetDataHome_triggered();
+
+    void showExistFlow();
+
+    void on_actionExcuteFlow_triggered();
 
 private:
     Ui::QJDMainWindow *ui;
 
+    QString _HOME_DIR;
     QHash<QString ,QString> stringPath;
     QJDAreaWidget *areaWidget;
     QJDAreaHeadWidget *areaHeadWidget;
@@ -47,9 +56,17 @@ private:
     QSplitter *splitter;
 
 
-    void setDir();
-    void setAreaWidget(QString areaString,QString areaPath,QStringList lineStringList,QStringList linePath,
-                       QStringList flowStringList,QStringList flowPath);
+
+    void setHomeDir(QString);
+    QString getHomeDir();
+    void setAreaWidget(QString areaString,QString areaPath,QStringList lineStringList,QStringList linePathList,
+                       QVector<QStringList> flowStringList,QVector<QStringList> flowPathList);
+
+public slots:
+    void enableNew(int level);
+    void creatNewArea(QString areaName);
+    void creatNewLine(QString lineName);
+    void creatNewFlow(QString flowName);
 };
 
 #endif // QJDMAINWINDOW_H

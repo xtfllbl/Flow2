@@ -16,6 +16,7 @@ public slots:
     void setPropertyData(QString path);
 private:
     QString dirSize(const QString &sDirPath);
+    QString fileSize(qint64 size);
 
 
     

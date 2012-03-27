@@ -12,6 +12,7 @@ QJDPropertyWidget::QJDPropertyWidget()
 }
 
 /// 列出给定路径下一层的文件或文件夹相关信息
+// 缺陷:1.name 只有descname才能显示,否则没有,size目前只有目录有size,文件没有
 void QJDPropertyWidget::setPropertyData(QString path)
 {
     QStandardItemModel *model=new QStandardItemModel();
@@ -21,14 +22,15 @@ void QJDPropertyWidget::setPropertyData(QString path)
 
     //设置标题
     QStringList a;
-    a<<"Name"<<"Owner"<<"Modified"<<"Size"<<"File";
+    a<<"DescName"<<"Owner"<<"Modified"<<"Size"<<"File";
     model->setHorizontalHeaderLabels(a);
 
     QDir dir1;
     dir1.setPath(path);  // 这个需要能设置,程序需要有settings.ini
     QStringList dirLev1;
-    dirLev1<<dir1.entryList(QDir::NoDotAndDotDot|QDir::Dirs);
+    dirLev1<<dir1.entryList(QDir::NoDotAndDotDot|QDir::Dirs|QDir::Files);
 
+    qDebug()<<"dirLev1::"<<dirLev1;
     for(int i=0;i<dirLev1.count();i++)
     {
         QFileInfo *fileInfo=new QFileInfo;
@@ -48,7 +50,17 @@ void QJDPropertyWidget::setPropertyData(QString path)
         QStandardItem *itemDesc = new QStandardItem(areatmp);
         QStandardItem *itemOwner = new QStandardItem(fileInfo->owner());
         QStandardItem *itemModify = new QStandardItem(fileInfo->lastModified().toString("yyyy-MM-dd h:mm:ss"));
-        QStandardItem *itemSize = new QStandardItem(dirSize(dir1.path()+"/"+dirLev1.at(i)));
+        QFileInfo info(dir1.path()+"/"+dirLev1.at(i));
+        QStandardItem *itemSize;
+        if(info.isDir()) // 是目录
+        {
+            itemSize = new QStandardItem(dirSize(dir1.path()+"/"+dirLev1.at(i)));
+        }
+        if(info.isFile()) // 是文件
+        {
+
+            itemSize = new QStandardItem(fileSize(info.size()));
+        }
         QStandardItem *itemFileName = new QStandardItem(fileInfo->fileName());
         model->setItem(i,0,itemDesc);
         model->setItem(i,1,itemOwner);
@@ -146,4 +158,39 @@ QString QJDPropertyWidget::dirSize(const QString &sDirPath)
     return dirWholeSize;
 }
 
+QString QJDPropertyWidget::fileSize(qint64 size)
+{
+    QString fileSize;
+
+    if(size<1024)
+    {
+        int tmp;
+        tmp=size;
+        fileSize=QString::number(tmp);
+        fileSize.append("B");
+    }
+    if(size>=1024 && size<1048576)
+    {
+        int tmp;
+        tmp=size/1024;
+        fileSize=QString::number(tmp);
+        fileSize.append("KB");
+    }
+    if(size>=1048576 && size<1073741824)
+    {
+        int tmp;
+        tmp=size/1024/1024;
+        fileSize=QString::number(tmp);
+        fileSize.append("MB");
+    }
+    if(size>=1073741824)
+    {
+        int tmp;
+        tmp=size/1024/1024/1024;
+        fileSize=QString::number(tmp);
+        fileSize.append("GB");
+    }
+    return fileSize;
+
+}
 

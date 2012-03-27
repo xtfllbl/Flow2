@@ -9,8 +9,6 @@ QJDReadXMLIndex::QJDReadXMLIndex(QObject *parent) :
     allModuleType.clear();
 }
 
-
-
 void QJDReadXMLIndex::nodeClear()
 {
     name.clear();

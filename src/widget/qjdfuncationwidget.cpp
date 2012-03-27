@@ -28,47 +28,55 @@ void QJDFuncationWidget::analysisIndexXML()
 void QJDFuncationWidget::setWidgetData()
 {
     qDebug()<<"QJDFuncationWidget::setWidgetData()";
-     allModuleName=readIndexXML->getModuleName();
-     allModuleGroup=readIndexXML->getModuleGroup();
-     allModulePath=readIndexXML->getModulePath();
-     allModuleDesc=readIndexXML->getModuleDesc();
-     allModuleType=readIndexXML->getModuleType();
+    allModuleName=readIndexXML->getModuleName();
+    allModuleGroup=readIndexXML->getModuleGroup();
+    allModulePath=readIndexXML->getModulePath();
+    allModuleDesc=readIndexXML->getModuleDesc();
+    allModuleType=readIndexXML->getModuleType();
 
-     QTreeWidgetItem *ioItem = new QTreeWidgetItem;
-     QTreeWidgetItem *processItem = new QTreeWidgetItem;
-     QTreeWidgetItem *displayItem = new QTreeWidgetItem;
-     ioItem->setText(0,"IO");
-     processItem->setText(0,"Process");
-     displayItem->setText(0,"Display");
+    QTreeWidgetItem *ioItem = new QTreeWidgetItem;
+    QTreeWidgetItem *processItem = new QTreeWidgetItem;
+    QTreeWidgetItem *displayItem = new QTreeWidgetItem;
+    ioItem->setText(0,"IO");
+    processItem->setText(0,"Process");
+    displayItem->setText(0,"Display");
 
-     for(int i=0;i<allModuleName.count();i++)
-     {
-         if(allModuleGroup.at(i)=="IO")
-         {
-             QTreeWidgetItem *ioChildItem = new QTreeWidgetItem;
-             ioChildItem->setText(0,allModuleName.at(i));
-             ioChildItem->setToolTip(0,allModuleDesc.at(i));
-             ioItem->addChild(ioChildItem);
-         }
-         if(allModuleGroup.at(i)=="Process")
-         {
-             QTreeWidgetItem *processChildItem = new QTreeWidgetItem;
-             processChildItem->setText(0,allModuleName.at(i));
-             processChildItem->setToolTip(0,allModuleDesc.at(i));
-             processItem->addChild(processChildItem);
-         }
-         if(allModuleGroup.at(i)=="Display")
-         {
-             QTreeWidgetItem *displayChildItem = new QTreeWidgetItem;
-             displayChildItem->setText(0,allModuleName.at(i));
-             displayChildItem->setToolTip(0,allModuleDesc.at(i));
-             displayItem->addChild(displayChildItem);
-         }
-     }
-
+    // tooltip设置为路径
+    for(int i=0;i<allModuleName.count();i++)
+    {
+        if(allModuleGroup.at(i)=="IO")
+        {
+            QTreeWidgetItem *ioChildItem = new QTreeWidgetItem;
+            ioChildItem->setText(0,allModuleName.at(i));
+            ioChildItem->setToolTip(0,allModulePath.at(i));
+            ioItem->addChild(ioChildItem);
+        }
+        if(allModuleGroup.at(i)=="Process")
+        {
+            QTreeWidgetItem *processChildItem = new QTreeWidgetItem;
+            processChildItem->setText(0,allModuleName.at(i));
+            processChildItem->setToolTip(0,allModulePath.at(i));
+            processItem->addChild(processChildItem);
+        }
+        if(allModuleGroup.at(i)=="Display")
+        {
+            QTreeWidgetItem *displayChildItem = new QTreeWidgetItem;
+            displayChildItem->setText(0,allModuleName.at(i));
+            displayChildItem->setToolTip(0,allModulePath.at(i));
+            displayItem->addChild(displayChildItem);
+        }
+    }
     this->addTopLevelItem(ioItem);
     this->addTopLevelItem(processItem);
     this->addTopLevelItem(displayItem);
 
     this->expandAll();
+}
+
+void QJDFuncationWidget::mouseDoubleClickEvent(QMouseEvent *event)
+{
+    qDebug()<<"QJDFuncationWidget::mouseDoubleClickEvent";
+    // 传出名称和路径
+    qDebug()<<this->currentItem()->text(0)<<this->currentItem()->toolTip(0);
+    emit sigFunDoubleClicked(currentItem()->text(0),currentItem()->toolTip(0));
 }
