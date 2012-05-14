@@ -5,6 +5,7 @@
 #include <QFileSystemModel>
 #include <QSettings>
 #include <QFileDialog>
+#include <QMessageBox>
 
 #include "widget/qjdnewarea.h"
 #include "widget/qjdnewline.h"
@@ -29,11 +30,13 @@ QJDMainWindow::QJDMainWindow(QWidget *parent) :
 
     pathLabel1=new QJDLabel;
     pathLabel1->setText("Address::");
+    pathLabel1->setMaximumHeight(10);
 
     pathLabel2=new QJDLabel;
     pathLabel2->setFrameShape(QFrame::Box);
     pathLabel2->setFrameShadow(QFrame::Raised);
     pathLabel2->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Preferred);
+    pathLabel2->setMaximumHeight(30);
 
     areaHeadWidget=new QJDAreaHeadWidget;
     areaWidget=new QJDAreaWidget();
@@ -44,15 +47,16 @@ QJDMainWindow::QJDMainWindow(QWidget *parent) :
     mdiWidget=new QJDMdi; // connect with areawidget & funcationwidget
 
     tabWidget=new QJDTabWidget();
+    tabWidget->setIconSize(QSize(24,24));
 //    tabWidget->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Expanding);
     QWidget *tab1=new QWidget;
     QGridLayout *gLayout1=new QGridLayout(tab1);
     gLayout1->addWidget(propertyWidget);
-    tabWidget->addTab(tab1, "Property Viewer");
+    tabWidget->addTab(tab1,QIcon(":/src/images/propertyviewer"),"Property Viewer");
     QWidget *tab2=new QWidget;
     QGridLayout *gLayout2=new QGridLayout(tab2);
     gLayout2->addWidget(mdiWidget);
-    tabWidget->addTab(tab2, "Flow Editor");
+    tabWidget->addTab(tab2,QIcon(":/src/images/flowviewer"), "Flow Editor");
     connect(tabWidget,SIGNAL(currentChanged(int)),this,SLOT(setWidgetVisible(int)));
 
     funcationHeadWidget=new QJDFuncationHeadWidget;
@@ -100,9 +104,16 @@ QJDMainWindow::QJDMainWindow(QWidget *parent) :
     // area
     connect(areaWidget,SIGNAL(sigItemPath(QString)),pathLabel2,SLOT(setText(QString)));
     connect(areaWidget,SIGNAL(sigItemPath(QString)),propertyWidget,SLOT(setPropertyData(QString)));
+
     connect(areaWidget,SIGNAL(sigActNewAreaClicked()),this,SLOT(on_actionNewArea_triggered()));
     connect(areaWidget,SIGNAL(sigActNewLineClicked()),this,SLOT(on_actionNewLine_triggered()));
     connect(areaWidget,SIGNAL(sigActNewFlowClicked()),this,SLOT(on_actionNewFlow_triggered()));
+    connect(areaWidget,SIGNAL(sigActDelAreaClicked()),this,SLOT(on_actionDelArea_triggered()));
+    connect(areaWidget,SIGNAL(sigActDelLineClicked()),this,SLOT(on_actionDelLine_triggered()));
+    connect(areaWidget,SIGNAL(sigActDelFlowClicked()),this,SLOT(on_actionDelFlow_triggered()));
+    connect(areaWidget,SIGNAL(sigActOpenFlowClicked()),this,SLOT(openFlowSlot()));
+    connect(areaWidget,SIGNAL(sigActExcuteFlowClicked()),this,SLOT(excuteFlowSlot()));
+
     connect(areaWidget,SIGNAL(sigExistFlow()),this,SLOT(showExistFlow()));
 
     // funcation
@@ -110,6 +121,7 @@ QJDMainWindow::QJDMainWindow(QWidget *parent) :
 //    connect(funcationWidget,SIGNAL(sigFunDoubleClicked(QString,QString)),this,SLOT(copyFlowXML()));
 
     // head
+    connect(areaHeadWidget,SIGNAL(sigRefreshClicked()),this,SLOT(refreshList()));
     connect(areaHeadWidget,SIGNAL(sigExpandClicked()),areaWidget,SLOT(expandAll()));
     connect(areaHeadWidget,SIGNAL(sigCollapseClicked()),areaWidget,SLOT(collapseAll()));
     connect(funcationHeadWidget,SIGNAL(sigExpandClicked()),funcationWidget,SLOT(expandAll()));
@@ -127,6 +139,10 @@ QJDMainWindow::~QJDMainWindow()
     delete ui;
 }
 
+void QJDMainWindow::refreshList()
+{
+    setHomeDir(getHomeDir());
+}
 /// TODO:名称和路径需要联系起来
 // 不能使用QHash ,会出现string相同的情况,那用什么方法呢
 // QMultiMap??
@@ -235,24 +251,28 @@ void QJDMainWindow::setHomeDir(QString homePath)
 }
 
 void QJDMainWindow::setAreaWidget(QString areaString, QString areaPath, QStringList lineStringList,
-                                  QStringList linePathList, QVector<QStringList> flowStringList, QVector<QStringList> flowPathList)
+                                  QStringList linePathList, QVector<QStringList> flowStringList,
+                                  QVector<QStringList> flowPathList)
 {
     qDebug()<<"setAreaWidget::"<<flowStringList<<flowPathList;
     QTreeWidgetItem *areaItem = new QTreeWidgetItem;
     areaItem->setText(0,areaString);
     areaItem->setToolTip(0,areaPath);
+    areaItem->setIcon(0,QIcon(":/src/images/area.png"));
 
     for(int j=0;j<lineStringList.count();j++)
     {
         QTreeWidgetItem *lineItem = new QTreeWidgetItem;
         lineItem->setText(0,lineStringList.at(j));
         lineItem->setToolTip(0,linePathList.at(j));
+        lineItem->setIcon(0,QIcon(":/src/images/line.png"));
 
         for(int k=0;k<flowStringList[j].size();k++)
         {
             QTreeWidgetItem *flowItem = new QTreeWidgetItem;
             flowItem->setText(0,flowStringList[j].at(k));
             flowItem->setToolTip(0,flowPathList[j].at(k));
+            flowItem->setIcon(0,QIcon(":/src/images/flow.png"));
             lineItem->addChild(flowItem);
         }
 
@@ -282,24 +302,51 @@ void QJDMainWindow::enableNew(int level)
 {
     if(level==1)
     {
-        qDebug()<<"area enable | line enable??";
         ui->actionNewArea->setEnabled(true);
         ui->actionNewLine->setEnabled(true);
         ui->actionNewFlow->setEnabled(false);
+        ui->actionNewArea->setVisible(true);
+        ui->actionNewLine->setVisible(true);
+        ui->actionNewFlow->setVisible(false);
+
+        ui->actionDelArea->setEnabled(true);
+        ui->actionDelLine->setEnabled(false);
+        ui->actionDelFlow->setEnabled(false);
+        ui->actionDelArea->setVisible(true);
+        ui->actionDelLine->setVisible(false);
+        ui->actionDelFlow->setVisible(false);
     }
     if(level==2)
     {
-        qDebug()<<"line & flow enable";
-        ui->actionNewArea->setEnabled(false);
-        ui->actionNewLine->setEnabled(true);
-        ui->actionNewFlow->setEnabled(true);
-    }
-    if(level==3)
-    {
-        qDebug()<<"flow enable";
         ui->actionNewArea->setEnabled(false);
         ui->actionNewLine->setEnabled(false);
         ui->actionNewFlow->setEnabled(true);
+        ui->actionNewArea->setVisible(false);
+        ui->actionNewLine->setVisible(false);
+        ui->actionNewFlow->setVisible(true);
+
+        ui->actionDelArea->setEnabled(false);
+        ui->actionDelLine->setEnabled(true);
+        ui->actionDelFlow->setEnabled(false);
+        ui->actionDelArea->setVisible(false);
+        ui->actionDelLine->setVisible(true);
+        ui->actionDelFlow->setVisible(false);
+    }
+    if(level==3)
+    {
+        ui->actionNewArea->setEnabled(false);
+        ui->actionNewLine->setEnabled(false);
+        ui->actionNewFlow->setEnabled(false);
+        ui->actionNewArea->setVisible(false);
+        ui->actionNewLine->setVisible(false);
+        ui->actionNewFlow->setVisible(false);
+
+        ui->actionDelArea->setEnabled(false);
+        ui->actionDelLine->setEnabled(false);
+        ui->actionDelFlow->setEnabled(true);
+        ui->actionDelArea->setVisible(false);
+        ui->actionDelLine->setVisible(false);
+        ui->actionDelFlow->setVisible(true);
     }
 }
 
@@ -346,10 +393,98 @@ void QJDMainWindow::on_actionNewFlow_triggered()
         qDebug()<<"IN level 3"<<linePath;
         mdiWidget->newSubWindow(newFlow->getFlowName(),linePath);
     }
+
+    tabWidget->setCurrentIndex(1);
 }
+
+void QJDMainWindow::on_actionDelArea_triggered()
+{
+    /// 需要添加确认选项
+    QMessageBox msgBox;
+     msgBox.setText("This area will be deleted.");
+     msgBox.setInformativeText("Do you really want to delete this area?");
+     msgBox.setIcon(QMessageBox::Question);
+     msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+     msgBox.setDefaultButton(QMessageBox::No);
+     int ret = msgBox.exec();
+
+     switch (ret) {
+       case QMessageBox::Yes:
+         // delete
+         if(!deleteDir(areaWidget->getAbsolutePath()))
+             qDebug()<<"Remove Area Dir failed"<<areaWidget->getAbsolutePath();
+         break;
+       case QMessageBox::No:
+           // Don't delete
+           break;
+       default:
+           // should never be reached
+           break;
+     }
+
+     areaWidget->removeCurrentArea();
+}
+
+void QJDMainWindow::on_actionDelLine_triggered()
+{
+    QMessageBox msgBox;
+     msgBox.setText("This line will be deleted.");
+     msgBox.setInformativeText("Do you really want to delete this line?");
+     msgBox.setIcon(QMessageBox::Question);
+     msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+     msgBox.setDefaultButton(QMessageBox::No);
+     int ret = msgBox.exec();
+
+     switch (ret) {
+       case QMessageBox::Yes:
+         // delete
+         if(!deleteDir(areaWidget->getAbsolutePath()))
+             qDebug()<<"Remove Line Dir failed"<<areaWidget->getAbsolutePath();
+         break;
+       case QMessageBox::No:
+           // Don't delete
+           break;
+       default:
+           // should never be reached
+           break;
+     }
+
+     areaWidget->removeCurrentLine_Flow();
+}
+
+void QJDMainWindow::on_actionDelFlow_triggered()
+{
+    QMessageBox msgBox;
+     msgBox.setText("This flow will be deleted.");
+     msgBox.setInformativeText("Do you really want to delete this flow?");
+     msgBox.setIcon(QMessageBox::Question);
+     msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+     msgBox.setDefaultButton(QMessageBox::No);
+     int ret = msgBox.exec();
+
+     switch (ret) {
+       case QMessageBox::Yes:
+         // delete
+         if(!deleteDir(areaWidget->getAbsolutePath()))
+             qDebug()<<"Remove Flow Dir failed"<<areaWidget->getAbsolutePath();
+         break;
+       case QMessageBox::No:
+           // Don't delete
+           break;
+       default:
+           // should never be reached
+           break;
+     }
+
+     areaWidget->removeCurrentLine_Flow();
+}
+
 
 void QJDMainWindow::showExistFlow()
 {
+    // 切换到flow
+    tabWidget->setCurrentIndex(1);
+
     QString flowPath=areaWidget->getAbsolutePath();
     QString flowName=areaWidget->currentItem()->text(0);
     mdiWidget->showExistSubWindow(flowName,flowPath);
@@ -401,7 +536,7 @@ void QJDMainWindow::creatNewArea(QString areaName)
         qDebug()<<"creat new desc open failed";
     }
     QTextStream ts(&newDesc);
-    ts<<areaName;
+    ts<<areaName<<"\n";
     newDesc.close();
 
     //3. 全局刷一下列表呢?还是添加到列表???
@@ -430,7 +565,7 @@ void QJDMainWindow::creatNewLine(QString lineName)
         qDebug()<<"creat new desc open failed";
     }
     QTextStream ts(&newDesc);
-    ts<<lineName;
+    ts<<lineName<<"\n";
     newDesc.close();
 
     //3. 全局刷一下列表呢?还是添加到列表???
@@ -471,8 +606,7 @@ void QJDMainWindow::creatNewFlow(QString flowName)
         qDebug()<<"creat new desc open failed";
     }
     QTextStream ts(&newDesc);
-    ts<<flowName;
-    ts<<"\n";
+    ts<<flowName<<"\n";
     newDesc.close();
 
     //3. 全局刷一下列表呢?还是添加到列表???
@@ -487,6 +621,68 @@ void QJDMainWindow::on_actionExcuteFlow_triggered()
     //    2. 按照顺序提取各个xml内容并输出到输出文件;
     //    3. 调用程序
     /// 应当传输信号进mdi,或者mdi传出??
-    mdiWidget->excuteFlow();  //
+    mdiWidget->excuteFlow();
+
+}
+
+/// 删除非空目录
+bool QJDMainWindow::deleteDir(const QString dirName)
+{
+    QDir directory(dirName);
+
+    if (!directory.exists())
+    {
+        return true;
+    }
+
+    QStringList files = directory.entryList(QDir::AllEntries | QDir::NoDotAndDotDot | QDir::Hidden);
+
+
+    QList<QString>::iterator f = files.begin();
+
+    bool error = false;
+
+    for (; f != files.end(); ++f)
+    {
+        QString filePath = QDir::convertSeparators(directory.path() + '/' + (*f));
+        QFileInfo fi(filePath);
+        if (fi.isFile() || fi.isSymLink())
+        {
+            QFile::setPermissions(filePath, QFile::WriteOwner);
+            if (!QFile::remove(filePath))
+            {
+                qDebug() << "Global::deleteDir 1" << filePath << "faild";
+                error = true;
+            }
+        }
+        else if (fi.isDir())
+        {
+            if (!deleteDir(filePath));
+            {
+                error = true;
+            }
+        }
+    }
+
+    if(!directory.rmdir(QDir::convertSeparators(directory.path())))
+    {
+        qDebug() << "Global::deleteDir 3" << directory.path()  << "faild";
+        error = true;
+    }
+
+    return !error;
+
+}
+
+void QJDMainWindow::openFlowSlot()
+{
+    showExistFlow();
+}
+
+void QJDMainWindow::excuteFlowSlot()
+{
+    /// 先显示,再执行,有问题
+    showExistFlow();
+    mdiWidget->excuteFlow();
 
 }

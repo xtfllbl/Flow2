@@ -13,19 +13,20 @@ void QJDCheckBox::emitEditFinished(int state)
     QStringList list;
     if(state==0)
     {
-        list<<PROPERTY<<DESC<<DATATYPE<<DISPLAYTYPE<<"unchecked";
+        list<<PROPERTY<<DESC<<DATATYPE<<DISPLAYTYPE<<"unchecked"<<OPTION;
     }
     if(state==2)
     {
-        list<<PROPERTY<<DESC<<DATATYPE<<DISPLAYTYPE<<"checked";
+        list<<PROPERTY<<DESC<<DATATYPE<<DISPLAYTYPE<<"checked"<<OPTION;
     }
     emit sigCheckBoxChanged(propertyInt,list);
 }
 
-void QJDCheckBox::setPropertyList(QString propertyName, QString desc, QString dataType, QString displayType)
+void QJDCheckBox::setPropertyList(QStringList argList)
 {
-    PROPERTY=propertyName;
-    DESC=desc;
-    DATATYPE=dataType;
-    DISPLAYTYPE=displayType;
+    PROPERTY=argList.at(0);
+    DESC=argList.at(1);
+    DATATYPE=argList.at(2);
+    DISPLAYTYPE=argList.at(3);
+    OPTION=argList.at(5);
 }

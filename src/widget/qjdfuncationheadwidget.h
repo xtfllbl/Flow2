@@ -4,7 +4,7 @@
 #include <QFrame>
 #include <QLabel>
 #include <QGroupBox>
-#include <QToolButton>
+#include <widget/QJD/qjdpushbutton.h>
 #include <QSpacerItem>
 class QJDFuncationHeadWidget : public QFrame
 {
@@ -18,8 +18,8 @@ signals:
 public slots:
 private:
     QLabel *textLabel;
-    QToolButton *expandButton;
-    QToolButton *collapseButton;
+    QJDPushButton *expandButton;
+    QJDPushButton *collapseButton;
     QSpacerItem *horizontalSpacer;
 private slots:
     void emitSigExpand();

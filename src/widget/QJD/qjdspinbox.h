@@ -9,7 +9,7 @@ class QJDSpinBox : public QSpinBox
 public:
     explicit QJDSpinBox(QWidget *parent = 0);
     int propertyInt;
-    void setPropertyList(QString,QString,QString,QString);
+    void setPropertyList(QStringList);
 signals:
     void sigValueChanged(int, QStringList);
 
@@ -19,6 +19,7 @@ private:
     QString DESC;
     QString DATATYPE;
     QString DISPLAYTYPE;
+    QString OPTION;
 private slots:
     void emitValueChanged(QString);
 };

@@ -7,6 +7,7 @@ QJDSpinBox::QJDSpinBox(QWidget *parent) :
 {
     setRange(-100000,100000);
     connect(this,SIGNAL(valueChanged(QString)),this,SLOT(emitValueChanged(QString)));
+    propertyInt=-1;
 
 }
 
@@ -14,14 +15,15 @@ void QJDSpinBox::emitValueChanged(QString value)
 {
 //    qDebug()<<"QJDSpinBox::emitValueChanged"<<value;
     QStringList list;
-    list<<PROPERTY<<DESC<<DATATYPE<<DISPLAYTYPE<<value;
+    list<<PROPERTY<<DESC<<DATATYPE<<DISPLAYTYPE<<value<<OPTION;
     emit sigValueChanged(propertyInt,list);
 }
 
-void QJDSpinBox::setPropertyList(QString propertyName, QString desc, QString dataType, QString displayType)
+void QJDSpinBox::setPropertyList(QStringList argList)
 {
-    PROPERTY=propertyName;
-    DESC=desc;
-    DATATYPE=dataType;
-    DISPLAYTYPE=displayType;
+    PROPERTY=argList.at(0);
+    DESC=argList.at(1);
+    DATATYPE=argList.at(2);
+    DISPLAYTYPE=argList.at(3);
+    OPTION=argList.at(5);
 }

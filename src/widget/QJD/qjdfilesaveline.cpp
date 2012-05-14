@@ -6,6 +6,8 @@
 QJDFileSaveLine::QJDFileSaveLine(QWidget *parent) :
     QWidget(parent)
 {
+    propertyInt=-1;
+
     lineEdit=new QLineEdit;
     fileButton=new QToolButton;
     fileButton->setText("...");
@@ -34,7 +36,7 @@ void  QJDFileSaveLine::fileButtonPressed()
 void QJDFileSaveLine::emitEditFinished()
 {
     QStringList list;
-    list<<PROPERTY<<DESC<<DATATYPE<<DISPLAYTYPE<<this->text();
+    list<<PROPERTY<<DESC<<DATATYPE<<DISPLAYTYPE<<this->text()<<OPTION;
     emit sigLineEditChanged(propertyInt,list);
 }
 
@@ -48,10 +50,11 @@ QString QJDFileSaveLine::text()
     return lineEdit->text();
 }
 
-void QJDFileSaveLine::setPropertyList(QString propertyName, QString desc, QString dataType, QString displayType)
+void QJDFileSaveLine::setPropertyList(QStringList argList)
 {
-    PROPERTY=propertyName;
-    DESC=desc;
-    DATATYPE=dataType;
-    DISPLAYTYPE=displayType;
+    PROPERTY=argList.at(0);
+    DESC=argList.at(1);
+    DATATYPE=argList.at(2);
+    DISPLAYTYPE=argList.at(3);
+    OPTION=argList.at(5);
 }

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>554</width>
-    <height>159</height>
+    <width>754</width>
+    <height>226</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -26,7 +26,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>554</width>
+     <width>754</width>
      <height>26</height>
     </rect>
    </property>
@@ -34,15 +34,6 @@
     <property name="title">
      <string>File</string>
     </property>
-    <widget class="QMenu" name="menuNew">
-     <property name="title">
-      <string>New</string>
-     </property>
-     <addaction name="actionNewArea"/>
-     <addaction name="actionNewLine"/>
-     <addaction name="actionNewFlow"/>
-    </widget>
-    <addaction name="menuNew"/>
     <addaction name="actionSetDataHome"/>
     <addaction name="actionExit"/>
    </widget>
@@ -64,21 +55,17 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionNewArea"/>
-   <addaction name="actionNewLine"/>
-   <addaction name="actionNewFlow"/>
    <addaction name="actionExcuteFlow"/>
    <addaction name="actionExit"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionExit">
+   <property name="icon">
+    <iconset resource="../images.qrc">
+     <normaloff>:/src/images/exit.png</normaloff>:/src/images/exit.png</iconset>
+   </property>
    <property name="text">
     <string>Exit</string>
-   </property>
-  </action>
-  <action name="actionNewLine">
-   <property name="text">
-    <string>New Line</string>
    </property>
   </action>
   <action name="actionNewFlow">
@@ -92,17 +79,47 @@
    </property>
   </action>
   <action name="actionSetDataHome">
+   <property name="icon">
+    <iconset resource="../images.qrc">
+     <normaloff>:/src/images/sethome.png</normaloff>:/src/images/sethome.png</iconset>
+   </property>
    <property name="text">
     <string>Set Data Home</string>
    </property>
   </action>
   <action name="actionExcuteFlow">
+   <property name="icon">
+    <iconset resource="../images.qrc">
+     <normaloff>:/src/images/excute.png</normaloff>:/src/images/excute.png</iconset>
+   </property>
    <property name="text">
     <string>ExcuteFlow</string>
    </property>
   </action>
+  <action name="actionDelArea">
+   <property name="text">
+    <string>Delete Area</string>
+   </property>
+  </action>
+  <action name="actionDelLine">
+   <property name="text">
+    <string>Delete Line</string>
+   </property>
+  </action>
+  <action name="actionDelFlow">
+   <property name="text">
+    <string>Delete Flow</string>
+   </property>
+  </action>
+  <action name="actionNewLine">
+   <property name="text">
+    <string>New Line</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="../images.qrc"/>
+ </resources>
  <connections/>
 </ui>

@@ -10,7 +10,7 @@ class QJDFileSaveLine : public QWidget
     Q_OBJECT
 public:
     explicit QJDFileSaveLine(QWidget *parent = 0);
-    void setPropertyList(QString propertyName, QString desc, QString dataType, QString displayType);
+    void setPropertyList(QStringList);
     int propertyInt;
 
 signals:
@@ -29,6 +29,7 @@ private:
     QString DESC;
     QString DATATYPE;
     QString DISPLAYTYPE;
+    QString OPTION;
 
     QLineEdit *lineEdit;
     QToolButton *fileButton;

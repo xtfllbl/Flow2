@@ -24,6 +24,10 @@ private:
     QString listWidgetItemName;
     QString listWidgetItemTooltip;
 
+    QString FLOW_PATH;
+    QStringList ITEM_PATH_LIST;
+    QStringList ITEM_STATUS_LIST;
+
 public slots:
     void newSubWindow(QString subName,QString linePath);
     void showExistSubWindow(QString flowName,QString flowPath);
@@ -33,7 +37,6 @@ public slots:
     /// 中键单击,弹出编辑的窗口 QJDFunArguWidget
     /// 窗口中要有保存按钮,按下之后改写文件
     /// 文件路径就为listwidget的toottip
-    void mousePressEvent(QMouseEvent *); // 处理中键
     void showFunArgu(QString name,QString path);  // 需要名称和路径
 private slots:
     void windowChoosed(QMdiSubWindow*);
@@ -43,8 +46,13 @@ private slots:
     void parseModuleElement(QDomElement const&);
     void parsePropertyElement(const QDomElement &element);
 
-    void outputMainFlowArguFile(QStringList,QList<QStringList>);
-    void listWidgetItemClicked(QListWidgetItem *);
+    QString outputMainFlowArguFile(QStringList,QList<QStringList>);
+    void runProcess(QString arg);
+    void listWidgetItemMidClicked(QListWidgetItem *);
+    bool delFlow(QList<QListWidgetItem *>);
+    void openCloseFlow(QList<QListWidgetItem *>);
+
+    bool refreshPosFile();
 };
 
 #endif // QJDMDI_H

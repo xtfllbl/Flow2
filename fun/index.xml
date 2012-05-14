@@ -7,7 +7,7 @@
      <type>Data IO</type>
 </module>
 <module name="ReSample" group="Process">
-    <path>modules/Process/modules/resample.xml</path>
+    <path>modules/Process/resample.xml</path>
     <desc>This is a resample module.</desc>
     <type>Data Process</type>
 </module>
@@ -24,6 +24,11 @@
 <module name="ShotAttributesExtraction" group="Process">
     <path>modules/Process/ShotAttributesExtraction.xml</path>
     <desc>This is a ShotAttributesExtraction module. </desc>
+    <type>Data Process</type>
+</module>
+<module name="Pick" group="Process">
+    <path>modules/Process/pick.xml</path>
+    <desc>This is a test module. </desc>
     <type>Data Process</type>
 </module>
 <module name="TraceDisplay" group="Display">

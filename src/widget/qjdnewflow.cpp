@@ -3,6 +3,8 @@
 QJDNewFlow::QJDNewFlow(QWidget *parent) :
     QDialog(parent)
 {
+    this->setWindowIcon(QIcon(":/src/images/flow.png"));
+
     applyBtn=new QPushButton;
     applyBtn->setText("Apply");
     cancleBtn=new QPushButton;

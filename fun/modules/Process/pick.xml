@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!DOCTYPE ui>
 <ui version="1.0">
-<module name="FirstBreakAutoPick" version="1.0">
+<module name="PickTest" version="1.0">
 
 <property name="jdtpath">
 	<desc>program path</desc>
@@ -29,10 +29,12 @@
 
 <property name="smooth">
 	<desc>should be smooth?</desc>
-	<displaytype name="radiobutton">
-		<option value="NO">1</option>
-		<option value="YES">0</option>
-	</displaytype>
+	<displaytype name="radiobutton" option="NO;YES">NO</displaytype>
+</property>
+
+<property name="smoothcombo">
+	<desc>should be smooth?</desc>
+	<displaytype name="combobox" option="NO;YES;OK;CANCLE;A;B;C;D">A</displaytype>
 </property>
 
 <property name="pickFileName">

@@ -3,6 +3,7 @@
 QJDNewArea::QJDNewArea(QWidget *parent) :
     QDialog(parent)
 {
+    this->setWindowIcon(QIcon(":/src/images/area.png"));
     applyBtn=new QPushButton;
     applyBtn->setText("Apply");
     cancleBtn=new QPushButton;

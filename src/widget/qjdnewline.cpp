@@ -3,6 +3,8 @@
 QJDNewLine::QJDNewLine(QWidget *parent) :
     QDialog(parent)
 {
+    this->setWindowIcon(QIcon(":/src/images/line.png"));
+
     applyBtn=new QPushButton;
     applyBtn->setText("Apply");
     cancleBtn=new QPushButton;

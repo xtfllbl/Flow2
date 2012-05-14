@@ -3,6 +3,7 @@
 
 QJDFuncationWidget::QJDFuncationWidget()
 {
+    this->setIconSize(QSize(24,24));
     this->setHeaderHidden(true);
     this->setAnimated(true);
 
@@ -38,8 +39,11 @@ void QJDFuncationWidget::setWidgetData()
     QTreeWidgetItem *processItem = new QTreeWidgetItem;
     QTreeWidgetItem *displayItem = new QTreeWidgetItem;
     ioItem->setText(0,"IO");
+    ioItem->setIcon(0,QIcon(":/src/images/io.png"));
     processItem->setText(0,"Process");
+    processItem->setIcon(0,QIcon(":/src/images/process.png"));
     displayItem->setText(0,"Display");
+    displayItem->setIcon(0,QIcon(":/src/images/display.png"));
 
     // tooltip设置为路径
     for(int i=0;i<allModuleName.count();i++)
@@ -49,13 +53,16 @@ void QJDFuncationWidget::setWidgetData()
             QTreeWidgetItem *ioChildItem = new QTreeWidgetItem;
             ioChildItem->setText(0,allModuleName.at(i));
             ioChildItem->setToolTip(0,allModulePath.at(i));
+            ioChildItem->setIcon(0,QIcon(":/src/images/io.png"));
             ioItem->addChild(ioChildItem);
+
         }
         if(allModuleGroup.at(i)=="Process")
         {
             QTreeWidgetItem *processChildItem = new QTreeWidgetItem;
             processChildItem->setText(0,allModuleName.at(i));
             processChildItem->setToolTip(0,allModulePath.at(i));
+            processChildItem->setIcon(0,QIcon(":/src/images/process.png"));
             processItem->addChild(processChildItem);
         }
         if(allModuleGroup.at(i)=="Display")
@@ -63,6 +70,7 @@ void QJDFuncationWidget::setWidgetData()
             QTreeWidgetItem *displayChildItem = new QTreeWidgetItem;
             displayChildItem->setText(0,allModuleName.at(i));
             displayChildItem->setToolTip(0,allModulePath.at(i));
+            displayChildItem->setIcon(0,QIcon(":/src/images/display.png"));
             displayItem->addChild(displayChildItem);
         }
     }

@@ -12,14 +12,15 @@ QJDLineEdit::QJDLineEdit(QWidget *parent) :
 void QJDLineEdit::emitEditFinished()
 {
     QStringList list;
-    list<<PROPERTY<<DESC<<DATATYPE<<DISPLAYTYPE<<this->text();
+    list<<PROPERTY<<DESC<<DATATYPE<<DISPLAYTYPE<<this->text()<<OPTION;
     emit sigLineEditChanged(propertyInt,list);
 }
 
-void QJDLineEdit::setPropertyList(QString propertyName, QString desc, QString dataType, QString displayType)
+void QJDLineEdit::setPropertyList(QStringList argList)
 {
-    PROPERTY=propertyName;
-    DESC=desc;
-    DATATYPE=dataType;
-    DISPLAYTYPE=displayType;
+    PROPERTY=argList.at(0);
+    DESC=argList.at(1);
+    DATATYPE=argList.at(2);
+    DISPLAYTYPE=argList.at(3);
+    OPTION=argList.at(5);
 }

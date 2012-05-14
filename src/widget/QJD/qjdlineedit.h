@@ -10,7 +10,7 @@ public:
     explicit QJDLineEdit(QWidget *parent = 0);
 
     int propertyInt;
-    void setPropertyList(QString,QString,QString,QString);
+    void setPropertyList(QStringList);
 signals:
     void sigLineEditChanged(int, QStringList);
 public slots:
@@ -19,6 +19,7 @@ private:
     QString DESC;
     QString DATATYPE;
     QString DISPLAYTYPE;
+    QString OPTION;
 private slots:
     void emitEditFinished();
 };

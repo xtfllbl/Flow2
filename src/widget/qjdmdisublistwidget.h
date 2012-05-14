@@ -2,6 +2,8 @@
 #define QJDMDISUBLISTWIDGET_H
 
 #include <QListWidget>
+#include <QMenu>
+#include <QListWidgetItem>
 
 class QJDMdiSubListWidget : public QListWidget
 {
@@ -11,11 +13,21 @@ public:
     
 signals:
     void sigMidButtonClicked(QListWidgetItem *item);
+    void sigDelFlowClicked(QList<QListWidgetItem *>);
+    void sigOpenCloseFlowClicked(QList<QListWidgetItem *>);
 public slots:
 private:
+    QMenu *menu;
+    QAction *actDelFlow;
+    QAction *actOpenCloseFlow;
+    QListWidgetItem *rightClickedItem;
+
+    void contextMenuEvent(QContextMenuEvent *);
     void mousePressEvent(QMouseEvent *event);
 private slots:
-    void itemClickedSlot(QListWidgetItem *item);
+    void midClickedSlot(QListWidgetItem *item);
+    void delFlowSlot();
+    void openCloseFlowSlot();
 };
 
 #endif // QJDMDISUBLISTWIDGET_H

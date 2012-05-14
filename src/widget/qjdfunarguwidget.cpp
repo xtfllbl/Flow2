@@ -2,11 +2,13 @@
 #include <QDebug>
 #include <QFile>
 #include "QJD/qjdlineedit.h"
-#include "QJD/qjdfilecombobox.h"
+#include "QJD/qjdcombobox.h"
 #include "QJD/qjdfilereadline.h"
 #include "QJD/qjdfilesaveline.h"
 #include "QJD/qjdcheckbox.h"
 #include "QJD/qjdspinbox.h"
+#include "QJD/qjdradiobutton.h"
+#include "QJD/qjdbuttongroup.h"
 
 QJDFunArguWidget::QJDFunArguWidget(QWidget *parent) :
     QWidget(parent)
@@ -15,20 +17,35 @@ QJDFunArguWidget::QJDFunArguWidget(QWidget *parent) :
 //    widgetList.clear();
     finalLayout=new QVBoxLayout();
     propertyList.clear();
+    this->setWindowFlags(Qt::Window
+                              | Qt::WindowCloseButtonHint);  // 单关闭按钮即可
 }
 
-void QJDFunArguWidget::setData(QString name, QString path)
+bool QJDFunArguWidget::setData(QString name, QString path)
 {
     qDebug()<<name<<path;
+    ARGU_FILE_PATH=path;
     // 有了名称和路径,需要解析xml并且显示
-    this->setWindowTitle(name);
+    QStringList areaLineFlow=path.split("/",QString::SkipEmptyParts);
+//    qDebug()<<"----------------"<<areaLineFlow;
+    QString flowString=areaLineFlow.at(areaLineFlow.size()-2);
+    this->setWindowTitle(flowString+" :: "+name);
 
     QFile xmlFile(path);
     if(!xmlFile.open(QFile::ReadOnly))
+    {
         qDebug()<<"QJDFunArguWidget::setData::xml File open failed";
+        return false;
+    }
 
     if(!readFile(&xmlFile))
+    {
         qDebug()<<"read file failed";
+        return false;
+    }
+
+    xmlFile.close();
+    return true;
 }
 
 bool QJDFunArguWidget::readFile(QIODevice *device)
@@ -54,25 +71,22 @@ bool QJDFunArguWidget::readFile(QIODevice *device)
 
     QDomElement module = root.firstChildElement("module");
     modulename=module.attribute("name");
+    moduleversion=module.attribute("version");
 
     QDomElement child=module.firstChildElement("property");
 
     while (!child.isNull())
     {
-//        nodeClear();  //清理节点包含信息
         property = child.attribute("name");
-
         parsePropertyElement(child);
-        // 设置一套机制传送信息
-        /// 貌似有没有没有必要,分类过于复杂,需要更换处理方式
-//        emit sigNodeData(property,desc,datatype,min,max,displaytype,displaytext,displayvalue,
-//                         optiontext,optionvalue,hidevalue,hidetype);
+        creatWidgetItem(property,desc,datatype,displaytype,displayvalue,optionstring);
 
-        creatWidgetItem(property,desc,datatype,displaytype,displayvalue);
         child = child.nextSiblingElement("property");
     }
 
     finishCreatUI();
+
+    return true;
 }
 
 // 只管处理,分类去其他地方
@@ -82,6 +96,7 @@ void QJDFunArguWidget::parsePropertyElement(const QDomElement &element)
     datatype.clear();
     displaytype.clear();
     displayvalue.clear();
+    optionstring.clear();
 
     QDomElement child = element.firstChildElement();
     while (!child.isNull())
@@ -101,18 +116,10 @@ void QJDFunArguWidget::parsePropertyElement(const QDomElement &element)
             displaytype=child.attribute("name");
             displayvalue=child.text();
 
-//            QDomElement option;
-//            if(child.hasChildNodes())   /// option 没了?
-//            {
-//                option=child.firstChildElement("option");
-//                // 遍历所有节点, 还需要知道节点的value
-//                while(!option.isNull())
-//                {
-//                    optionvalue<<option.text();
-//                    optiontext<<option.attribute("value");
-//                    option=option.nextSiblingElement();
-//                }
-//            }
+            if(child.hasAttribute("option"))
+            {
+                optionstring=child.attribute("option");
+            }
         }
 
 //        qDebug()<<"~~~~~"<<property<<desc<<datatype<<displaytype<<displayvalue;
@@ -122,28 +129,30 @@ void QJDFunArguWidget::parsePropertyElement(const QDomElement &element)
 }
 
 void QJDFunArguWidget::creatWidgetItem(QString property, QString desc, QString datatype,
-                                       QString displaytype, QString displayvalue)
+                                       QString displaytype, QString displayvalue, QString optionstring)
 {
     QHBoxLayout *normalLayout=new QHBoxLayout();
-    qDebug()<<"\nQJDFunArguWidget::creatWidgetItem::"<<property<<desc<<datatype<<displaytype<<displayvalue;
-    QStringList arg;
-    arg<<property<<desc<<datatype<<displaytype<<displayvalue;
-    propertyList.append(arg);
+    qDebug()<<"\nQJDFunArguWidget::creatWidgetItem::"
+           <<property<<desc<<datatype<<displaytype<<displayvalue<<optionstring;
+
+    QStringList argList;
+    argList<<property<<desc<<datatype<<displaytype<<displayvalue<<optionstring;
+    propertyList.append(argList);
 
     QLabel *proLabel=new QLabel;
 
     /// 现在不需要带id 的这些控件了,无需实时改动xml,但是改完了还是要改xml的,如何返回信息呢
     QJDLineEdit *lineEdit=new QJDLineEdit;
     QJDCheckBox *checkBox=new QJDCheckBox;
-    QComboBox *comboBox=new QComboBox;
+    QJDComboBox *comboBox=new QJDComboBox;
     QJDSpinBox *spinBox=new QJDSpinBox;
-    QGroupBox *groupBox=new QGroupBox;
+    QJDButtonGroup *buttonGroup=new QJDButtonGroup;
+//    QJDRadioButton *radioButton=new QJDRadioButton;
     // self edit
     QJDFileReadLine *fileRead=new QJDFileReadLine;
     QJDFileSaveLine *fileSave=new QJDFileSaveLine;
-    QJDFileComboBox *fileComboBox=new QJDFileComboBox;
 
-    QList<QString> radioIDList;
+//    QList<QString> radioIDList;
 
     if(!property.isEmpty())   // 名称，作为label
     {
@@ -165,7 +174,7 @@ void QJDFunArguWidget::creatWidgetItem(QString property, QString desc, QString d
         /// 需要值 lineEdit.text,只需要返回这个即可
         if(displaytype=="lineedit")
         {
-            lineEdit->setPropertyList(property,desc,datatype,displaytype);
+            lineEdit->setPropertyList(argList);
             lineEdit->setMinimumWidth(200);
             lineEdit->setText(displayvalue);
             lineEdit->propertyInt=propertyList.size()-1;
@@ -177,7 +186,7 @@ void QJDFunArguWidget::creatWidgetItem(QString property, QString desc, QString d
         /// ------------------------------------fileReadLine-------------------------------//
         if(displaytype=="fileread")
         {
-            fileRead->setPropertyList(property,desc,datatype,displaytype);
+            fileRead->setPropertyList(argList);
             fileRead->setMinimumWidth(200);
             fileRead->setText(displayvalue);
             fileRead->propertyInt=propertyList.size()-1;
@@ -190,7 +199,7 @@ void QJDFunArguWidget::creatWidgetItem(QString property, QString desc, QString d
         /// ------------------------------------fileSaveLine-------------------------------//
         if(displaytype=="filesave")
         {
-            fileSave->setPropertyList(property,desc,datatype,displaytype);
+            fileSave->setPropertyList(argList);
             fileSave->setMinimumWidth(200);
             fileSave->setText(displayvalue);
             fileSave->propertyInt=propertyList.size()-1;
@@ -202,7 +211,7 @@ void QJDFunArguWidget::creatWidgetItem(QString property, QString desc, QString d
         /// ------------------------------------checkBox-------------------------------//
         if(displaytype=="checkbox")
         {
-            checkBox->setPropertyList(property,desc,datatype,displaytype);
+            checkBox->setPropertyList(argList);
             checkBox->setMinimumWidth(200);
             if(displayvalue=="checked")
             {
@@ -214,44 +223,10 @@ void QJDFunArguWidget::creatWidgetItem(QString property, QString desc, QString d
             normalLayout->addWidget(checkBox);
         }
 
-        /// ------------------------------------combobox-------------------------------//
-//        if(displaytype=="combobox")
-//        {
-//            comboBox->setMinimumWidth(200);
-//            for(int i=0;i<optionvalue.size();i++)
-//            {
-//                comboBox->addItem(optiontext[i]);
-//            }
-//            normalLayout->addWidget(comboBox);
-//        }
-        /// ------------------------------------filecombobox-------------------------------//
-//        if(displaytype=="filecombobox")
-//        {
-//            fileComboBox->setMinimumWidth(200);
-//            //遍历optionvalue，然后添加到comboBox当中去
-//            QDir dir;
-//            dir.setPath(optionvalue.at(0));
-//            dir.setFilter(QDir::Files | QDir::NoSymLinks);
-////            dir.setSorting(QDir::Size | QDir::Reversed);
-
-//            QFileInfoList list = dir.entryInfoList();
-//            fileComboBox->addItem("Please Choose");
-//            for (int i = 0; i < list.size(); ++i)
-//            {
-//                QFileInfo fileInfo = list.at(i);
-//                fileComboBox->addItem(fileInfo.fileName());
-//            }
-
-//            normalLayout->addWidget(fileComboBox);
-//            widgetList.append(fileComboBox);
-
-//            hashWhatIsThisWidget.insert(fileComboBox,"QJDFileComboBox");
-//        }
-
         /// ------------------------------------spinbox-------------------------------//
         if(displaytype=="spinbox")
         {
-            spinBox->setPropertyList(property,desc,datatype,displaytype);
+            spinBox->setPropertyList(argList);
             spinBox->setMinimumWidth(200);
             spinBox->setValue(displayvalue.toInt());
             spinBox->propertyInt=propertyList.size()-1;
@@ -260,46 +235,59 @@ void QJDFunArguWidget::creatWidgetItem(QString property, QString desc, QString d
             normalLayout->addWidget(spinBox);
         }
 
+        /// ------------------------------------combobox-------------------------------//
+        /// 和默认的不一样,需要多一个option stringlist
+        if(displaytype=="combobox")
+        {
+            QStringList optionList;
+            optionList=optionstring.split(";",QString::SkipEmptyParts);
+
+            comboBox->setPropertyList(argList);
+            comboBox->setMinimumWidth(200);
+            for(int i=0;i<optionList.size();i++)
+            {
+                comboBox->addItem(optionList.at(i));
+                if(optionList.at(i)==displayvalue)
+                {
+                    comboBox->setCurrentIndex(i);
+                }
+            }
+            comboBox->propertyInt=propertyList.size()-1;
+
+            connect(comboBox,SIGNAL(sigComboBoxChanged(int,QStringList)),
+                    this,SLOT(changeDisplayValue(int,QStringList)));
+            normalLayout->addWidget(comboBox);
+        }
+
         /// ------------------------------------radiobutton-------------------------------//
-        /// 问题最多，最后处理
-//        if(displaytype=="radiobutton")
-//        {
-//            // 这可是有列表和选中与否的，还要设好buttongroup等
-//            QGridLayout *radioLayout=new QGridLayout();
-//            QButtonGroup *group=new QButtonGroup();
-//            for(int i=0;i<optiontext.size();i++)
-//            {
-//                radio=new QJDRadioButton();  // 因为需要很多，所以一个是不够的
-//                radio->setText(optiontext.at(i));
+        /// 需要生成多个radiobutton,如何处理
+        if(displaytype=="radiobutton")
+        {
+            QStringList optionList;
+            optionList=optionstring.split(";",QString::SkipEmptyParts);
+            QHBoxLayout *radioLayout=new QHBoxLayout();
 
-//                if(optionvalue[i]=="checked")
-//                {
-//                    radio->setChecked(true);
-//                }
+            buttonGroup->setPropertyList(argList);
+            for(int i=0;i<optionList.size();i++)
+            {
+                QRadioButton *radioButton=new QRadioButton;
+                radioButton->setText(optionList.at(i));
+                radioButton->setMinimumWidth(200);
 
-//                /// 应该还要加上groupBox的id,另外增加
-//                group->addButton(radio);
-//                /// 合理分配布局
-//                int a=0,b=1;
-//                if(i%2==0)
-//                {
-//                    radioLayout->addWidget(radio,i-a,0);
-//                    a++;
-//                }
-//                if(i%2==1)
-//                {
-//                    radioLayout->addWidget(radio,i-b,1);
-//                    b++;
-//                }
+                buttonGroup->addButton(radioButton);
+                radioLayout->addWidget(radioButton);
 
-//                widgetList.append(radio);
-//            }
-//            groupBox->setLayout(radioLayout);
-//            normalLayout->addWidget(groupBox);
+                if(optionList.at(i)==displayvalue)
+                {
+                    radioButton->setChecked(true);
+                }
+            }
+            buttonGroup->propertyInt=propertyList.size()-1;  //应当是一个什么包含在里面,而用那个来设置
 
-//            // 这个还不好确定,因为是groupbox,所以无法得知内部内容
-//            ///            hashWhatIsThisWidget.insert(spinBox,"QSpinBox");
-//        }
+            connect(buttonGroup,SIGNAL(sigButtonGroupChecked(int,QStringList)),
+                    this,SLOT(changeDisplayValue(int,QStringList)));
+            normalLayout->addLayout(radioLayout);
+        }
     }
     finalLayout->addLayout(normalLayout);
 }
@@ -328,12 +316,130 @@ void QJDFunArguWidget::changeDisplayValue(int propertyListInt ,QStringList chang
 {
     qDebug()<<"changeDisplayValue::"<<propertyList.at(propertyListInt)<<changeList;
     propertyList.replace(propertyListInt,changeList);
-    qDebug()<<propertyList;
+//    qDebug()<<propertyList;
 }
 
 void QJDFunArguWidget::saveArgToXml()
 {
-    qDebug()<<"saveArgToXml";
+    qDebug()<<"saveArgToXml::"<<ARGU_FILE_PATH;
     qDebug()<<propertyList;
     /// 将propertyList当中的东西重新写回去
+    QFile xmlFile(ARGU_FILE_PATH);
+    if(!xmlFile.open(QFile::WriteOnly))
+        qDebug()<<"QJDFunArguWidget::saveArgToXml::xml File open failed";
+
+    // 1. 写开头
+    QTextStream out(&xmlFile);
+    out<<"<?xml version='1.0' encoding='UTF-8'?>\n"
+            <<"<!DOCTYPE ui>\n"
+            <<"<ui version=\"1.0\">\n"
+           <<"</ui>\n";
+    xmlFile.close();
+
+    // 2. 添加内容
+    if(!xmlFile.open(QFile::ReadOnly | QFile::Text))
+        qDebug()<<"QJDFunArguWidget::saveArgToXml::xml File open failed";
+    if(!prepareWriteFile(&xmlFile))
+        qDebug()<<"prepareWriteFile failed";
+    xmlFile.close();
+
+    // 3.正式写入
+    if(!write())
+        qDebug()<<"writejob failed";
+
+    this->close();
+}
+
+bool QJDFunArguWidget::prepareWriteFile(QIODevice *file)
+{
+    QString errorStr;
+    int errorLine;
+    int errorColumn;
+    if (!doc.setContent(file, true, &errorStr, &errorLine,&errorColumn))
+    {
+        // 错误处理，先不必要
+        qDebug()<<"has sth wrong,need init first";
+        QWidget *widgetMSG=new QWidget();
+        QMessageBox::information(widgetMSG, tr("DOM Bookmarks"),
+                                 tr("Parse error at line %1, column %2:\n%3")
+                                 .arg(errorLine)
+                                 .arg(errorColumn)
+                                 .arg(errorStr));
+        file->close();
+        return false;
+    }
+    QDomElement root = doc.documentElement();
+    qDebug()<<root.text();
+    QDomElement moduleEle=doc.createElement("module");
+    root.appendChild(moduleEle);  /// 应当在模块内部添加，而不是外部
+
+    // module
+    QDomAttr moduleVersionAttr=doc.createAttribute("version");
+    moduleVersionAttr.setValue(moduleversion);
+    moduleEle.setAttributeNode(moduleVersionAttr);
+
+    QDomAttr moduleNameAttr=doc.createAttribute("name");
+    moduleNameAttr.setValue(modulename);
+    moduleEle.setAttributeNode(moduleNameAttr);
+
+    // property desc datatype displaytype displayvalue option
+    for(int i=0;i<propertyList.size();i++)
+    {
+        QDomElement propertyEle =  doc.createElement("property");
+        QDomElement descEle =  doc.createElement("desc");
+        QDomElement datatypeEle =  doc.createElement("datatype");
+        QDomElement displaytypeEle =  doc.createElement("displaytype");
+
+        // property
+        QDomAttr propertyAttr=doc.createAttribute("name");
+        propertyAttr.setValue(propertyList[i].at(0));
+        propertyEle.setAttributeNode(propertyAttr);
+        moduleEle.appendChild(propertyEle);
+
+        // desc
+        QDomText descText=doc.createTextNode(propertyList[i].at(1));
+        descEle.appendChild(descText);
+        propertyEle.appendChild(descEle);
+
+        // datatype
+        QDomText datatypeText=doc.createTextNode(propertyList[i].at(2));
+        datatypeEle.appendChild(datatypeText);
+        propertyEle.appendChild(datatypeEle);
+
+        // displaytype
+        if(!propertyList[i].at(5).isEmpty())
+        {
+            QDomAttr displaytypeOptionAttr=doc.createAttribute("option");
+            displaytypeOptionAttr.setValue(propertyList[i].at(5));
+            displaytypeEle.setAttributeNode(displaytypeOptionAttr);
+        }
+        QDomAttr displaytypeNameAttr=doc.createAttribute("name");
+        displaytypeNameAttr.setValue(propertyList[i].at(3));
+        displaytypeEle.setAttributeNode(displaytypeNameAttr);
+        QDomText displayvalueText=doc.createTextNode(propertyList[i].at(4));
+        displaytypeEle.appendChild(displayvalueText);
+        propertyEle.appendChild(displaytypeEle);
+    }
+
+    return true;
+}
+
+bool QJDFunArguWidget::write()
+{
+    qDebug()<<"QJDFunArguWidget::write xml";
+    /// 写可以等模块分析完毕之后
+    QFile fileWrite;
+    fileWrite.setFileName(ARGU_FILE_PATH);
+    if(!fileWrite.open(QFile::WriteOnly | QFile::Text))
+    {
+        qDebug()<<"can`t open jobFileXML in writeOnly";
+        return false;
+    }
+
+    const int IndentSize = 4;
+    QTextStream out(&fileWrite);
+    doc.save(out, IndentSize);   //doc是可以延续的
+    fileWrite.close();
+
+    return true;
 }

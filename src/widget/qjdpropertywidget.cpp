@@ -22,7 +22,8 @@ void QJDPropertyWidget::setPropertyData(QString path)
 
     //设置标题
     QStringList a;
-    a<<"DescName"<<"Owner"<<"Modified"<<"Size"<<"File";
+//    a<<"DescName"<<"Owner"<<"Modified"<<"Size"<<"File";
+    a<<"File"<<"DescName"<<"Owner"<<"Modified"<<"Size";
     model->setHorizontalHeaderLabels(a);
 
     QDir dir1;
@@ -62,11 +63,11 @@ void QJDPropertyWidget::setPropertyData(QString path)
             itemSize = new QStandardItem(fileSize(info.size()));
         }
         QStandardItem *itemFileName = new QStandardItem(fileInfo->fileName());
-        model->setItem(i,0,itemDesc);
-        model->setItem(i,1,itemOwner);
-        model->setItem(i,2,itemModify);
-        model->setItem(i,3,itemSize);
-        model->setItem(i,4,itemFileName);
+        model->setItem(i,0,itemFileName);
+        model->setItem(i,1,itemDesc);
+        model->setItem(i,2,itemOwner);
+        model->setItem(i,3,itemModify);
+        model->setItem(i,4,itemSize);
 
     }
 

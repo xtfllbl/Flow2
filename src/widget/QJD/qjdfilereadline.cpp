@@ -7,6 +7,8 @@
 QJDFileReadLine::QJDFileReadLine(QWidget *parent) :
     QWidget(parent)
 {    
+    propertyInt=-1;
+
     lineEdit=new QLineEdit;
     fileButton=new QToolButton;
     fileButton->setText("...");
@@ -39,7 +41,7 @@ void  QJDFileReadLine::fileButtonPressed()
 void QJDFileReadLine::emitEditFinished()
 {
     QStringList list;
-    list<<PROPERTY<<DESC<<DATATYPE<<DISPLAYTYPE<<this->text();
+    list<<PROPERTY<<DESC<<DATATYPE<<DISPLAYTYPE<<this->text()<<OPTION;
     emit sigLineEditChanged(propertyInt,list);
 }
 
@@ -53,10 +55,11 @@ QString QJDFileReadLine::text()
     return lineEdit->text();
 }
 
-void QJDFileReadLine::setPropertyList(QString propertyName, QString desc, QString dataType, QString displayType)
+void QJDFileReadLine::setPropertyList(QStringList argList)
 {
-    PROPERTY=propertyName;
-    DESC=desc;
-    DATATYPE=dataType;
-    DISPLAYTYPE=displayType;
+    PROPERTY=argList.at(0);
+    DESC=argList.at(1);
+    DATATYPE=argList.at(2);
+    DISPLAYTYPE=argList.at(3);
+    OPTION=argList.at(5);
 }

@@ -24,6 +24,8 @@ public:
     explicit QJDMainWindow(QWidget *parent = 0);
     ~QJDMainWindow();
     
+    bool deleteDir(const QString dirName);
+
 private slots:
     void on_actionExit_triggered();
     void setWidgetVisible(int);
@@ -36,11 +38,22 @@ private slots:
 
     void on_actionExcuteFlow_triggered();
 
+    void on_actionDelArea_triggered();
+
+    void on_actionDelLine_triggered();
+
+    void on_actionDelFlow_triggered();
+
+    void refreshList();
+
+    void openFlowSlot();
+    void excuteFlowSlot();
+
 private:
     Ui::QJDMainWindow *ui;
 
     QString _HOME_DIR;
-    QHash<QString ,QString> stringPath;
+//    QHash<QString ,QString> stringPath;
     QJDAreaWidget *areaWidget;
     QJDAreaHeadWidget *areaHeadWidget;
     QWidget *areaSplitterWidget;

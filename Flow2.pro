@@ -34,10 +34,14 @@ SOURCES += main.cpp\
     src/widget/qjdfunarguwidget.cpp \
     src/widget/QJD/qjdfilesaveline.cpp \
     src/widget/QJD/qjdfilereadline.cpp \
-    src/widget/QJD/qjdfilecombobox.cpp \
     src/widget/QJD/qjdlineedit.cpp \
     src/widget/QJD/qjdcheckbox.cpp \
-    src/widget/QJD/qjdspinbox.cpp
+    src/widget/QJD/qjdspinbox.cpp \
+    src/widget/QJD/qjdcombobox.cpp \
+    src/widget/QJD/qjdradiobutton.cpp \
+    src/widget/QJD/qjdbuttongroup.cpp \
+    src/widget/QJD/qjdpushbutton.cpp \
+    src/widget/qjdprocesswidget.cpp
 
 HEADERS  += src/qjdmainwindow.h \
     src/widget/qjdmdi.h \
@@ -57,9 +61,16 @@ HEADERS  += src/qjdmainwindow.h \
     src/widget/qjdfunarguwidget.h \
     src/widget/QJD/qjdfilesaveline.h \
     src/widget/QJD/qjdfilereadline.h \
-    src/widget/QJD/qjdfilecombobox.h \
     src/widget/QJD/qjdlineedit.h \
     src/widget/QJD/qjdcheckbox.h \
-    src/widget/QJD/qjdspinbox.h
+    src/widget/QJD/qjdspinbox.h \
+    src/widget/QJD/qjdcombobox.h \
+    src/widget/QJD/qjdradiobutton.h \
+    src/widget/QJD/qjdbuttongroup.h \
+    src/widget/QJD/qjdpushbutton.h \
+    src/widget/qjdprocesswidget.h
 
 FORMS    += src/qjdmainwindow.ui
+
+RESOURCES += \
+    images.qrc
