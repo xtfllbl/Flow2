@@ -5,6 +5,8 @@
 #include <QMdiSubWindow>
 #include "qjdmdisublistwidget.h"
 #include <QtXml>
+#include "qjdprocesswidget.h"
+#include "qjdfunarguwidget.h"
 
 class QJDMdi : public QMdiArea
 {
@@ -28,16 +30,24 @@ private:
     QStringList ITEM_PATH_LIST;
     QStringList ITEM_STATUS_LIST;
 
+    QJDProcessWidget *processWidget;
+
+    QList<QJDFunArguWidget *> arguWidgetLimitList;
+
+    QHash<QMdiSubWindow *,QString> hashSubMdiName;
+
 public slots:
     void newSubWindow(QString subName,QString linePath);
     void showExistSubWindow(QString flowName,QString flowPath);
     void addFlow(QString name,QString xmlPath);
-    void excuteFlow();
+    void excuteFlow(QString flowName);
 
     /// 中键单击,弹出编辑的窗口 QJDFunArguWidget
     /// 窗口中要有保存按钮,按下之后改写文件
     /// 文件路径就为listwidget的toottip
     void showFunArgu(QString name,QString path);  // 需要名称和路径
+
+    void showProcessWidget();
 private slots:
     void windowChoosed(QMdiSubWindow*);
     bool processFlowXML(QStringList);
@@ -47,7 +57,7 @@ private slots:
     void parsePropertyElement(const QDomElement &element);
 
     QString outputMainFlowArguFile(QStringList,QList<QStringList>);
-    void runProcess(QString arg);
+    void runProcess(QString arg,QString name);
     void listWidgetItemMidClicked(QListWidgetItem *);
     bool delFlow(QList<QListWidgetItem *>);
     void openCloseFlow(QList<QListWidgetItem *>);

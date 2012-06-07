@@ -54,5 +54,8 @@
         <file>src/images/window-close.png</file>
         <file>src/images/x-office-document.png</file>
         <file>src/images/open.png</file>
+        <file>src/images/document-open.png</file>
+        <file>src/images/edit-copy.png</file>
+        <file>src/images/edit-select-all.png</file>
     </qresource>
 </RCC>

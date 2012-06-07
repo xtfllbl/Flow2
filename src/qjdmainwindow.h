@@ -49,8 +49,11 @@ private slots:
     void openFlowSlot();
     void excuteFlowSlot();
 
+    void on_actionJob_Viewer_triggered();
+
 private:
     Ui::QJDMainWindow *ui;
+    QSettings settings;
 
     QString _HOME_DIR;
 //    QHash<QString ,QString> stringPath;

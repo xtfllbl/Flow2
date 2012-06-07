@@ -5,14 +5,14 @@
 #include <QFile>
 #include <QApplication>
 #include <QMouseEvent>
-#include "qjdfunarguwidget.h"
-#include "qjdprocesswidget.h"
+#include "qjdprocess.h"
 
 /// 这是个很麻烦的部分
 // 1.通关新建或者打开流程在里面建立窗口
 /// TODO: 添加函数 1.new flow 外部传参,新建窗口 2.添加流程 funcation widget 传进来 3.flow 的 xml 读取
 QJDMdi::QJDMdi()
 {
+
     moduleName.clear();
     propertyNameAndValue.clear();
     propertyNameAndValueList.clear();
@@ -20,6 +20,8 @@ QJDMdi::QJDMdi()
     setAttribute(Qt::WA_DeleteOnClose);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);   // 没有用?
     setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+
+    processWidget=new QJDProcessWidget(/*this*/); // 为什么不能加this???
 
     /// 添加sub要信号传过来再添加,sub中的内容则靠funcation list
     // 从area widget当中 新建 flow 传过来
@@ -78,13 +80,19 @@ void QJDMdi::newSubWindow(QString subName,QString linePath)
     connect(listWidget,SIGNAL(sigOpenCloseFlowClicked(QList<QListWidgetItem *>)),
              this,SLOT(openCloseFlow(QList<QListWidgetItem *>)));
 
+    hashSubMdiName.insert(subWindow,listWidget->windowTitle());
+
     subWindow->show();  //正常显示,new的时候不需要在listwidget中显示内容,但是从area双击过来的需要解析并且显示
 }
 
-// 仅做显示用,无需处理添加删除,均交由最后提交处理
+// 打开过的flow不要再次打开
 void QJDMdi::showExistSubWindow(QString flowName, QString flowPath)
 {
     qDebug()<<flowName<<flowPath;  //那可是要从flowPath下面的pos文件里面读取顺序
+
+
+
+
     /// 0. 先要进行重复处理,对flowPath进行审查
     QJDMdiSubListWidget *listWidget=new QJDMdiSubListWidget;
     listWidget->setMinimumSize(200,200);
@@ -94,6 +102,18 @@ void QJDMdi::showExistSubWindow(QString flowName, QString flowPath)
     QString areaString=areaLineFlow.at(areaLineFlow.size()-3);
     QString lineString=areaLineFlow.at(areaLineFlow.size()-2);
     listWidget->setWindowTitle(areaString+"::"+lineString+"::"+flowName);
+
+    /// -1. 检查有没有重复
+    for(int i=0;i<this->subWindowList().size();i++)
+    {
+//        qDebug()<<"~~~~~"<<hashSubMdiName.size()
+//               <<hashSubMdiName.value(subWindowList().at(i))<<listWidget->windowTitle();
+        if(hashSubMdiName.value(subWindowList().at(i))==listWidget->windowTitle() )
+        {
+            QMessageBox::warning(this,"Warning","Please do not open the same flow again!");
+            return;
+        }
+    }
 
     /// 1. 读取顺序文件,写入list
     QFile posFile;
@@ -162,6 +182,8 @@ void QJDMdi::showExistSubWindow(QString flowName, QString flowPath)
     this->setActiveSubWindow(subWindow);
     subWindow->show();  //正常显示,new的时候不需要在listwidget中显示内容,但是从area双击过来的需要解析并且显示
 
+    hashSubMdiName.insert(subWindow,listWidget->windowTitle());
+
     refreshPosFile();  // 往内存中加点料
 }
 
@@ -175,8 +197,12 @@ void QJDMdi::addFlow(QString name, QString xmlPath)
     // -----------------------------------------------------------------------------------------------------//
     qDebug()<<"QJDMdi::addFlow"<<name<<xmlPath;
     /// 在当前的mdi窗口中,添加一行,需要找到那个listwidget,QHASH(sub,list),great idea
+    if(currentSubWindow()==0)
+    {
+        QMessageBox::warning(this,tr("Failed"),tr("Please open a flow first before you can do this!"));
+        return;
+    }
     QMdiSubWindow *subWindow=currentSubWindow();
-
 
     /// 复制文件到当前flow
     // from listwidgetitem tootip To subwindow tooltip
@@ -215,6 +241,8 @@ void QJDMdi::addFlow(QString name, QString xmlPath)
 //    listWidget->addItem(listWidgetItem);
     listWidget->insertItem(listWidget->currentRow()+1,listWidgetItem);
 
+    listWidget->setCurrentRow(listWidget->currentRow()+1);
+
 //    /// 中键显示参数窗口
 //    connect(listWidget,SIGNAL(sigMidButtonClicked(QListWidgetItem*)),
 //            this,SLOT(listWidgetItemMidClicked(QListWidgetItem*)));
@@ -223,6 +251,7 @@ void QJDMdi::addFlow(QString name, QString xmlPath)
 //             this,SLOT(delFlow(QList<QListWidgetItem *>)));
 //    connect(listWidget,SIGNAL(sigOpenCloseFlowClicked(QList<QListWidgetItem *>)),
 //             this,SLOT(openCloseFlow(QList<QListWidgetItem *>)));
+
 
     refreshPosFile();
 }
@@ -362,7 +391,7 @@ bool QJDMdi::refreshPosFile()
     return true;
 }
 
-void QJDMdi::excuteFlow()
+void QJDMdi::excuteFlow(QString flowName)
 {
     /// 总感觉不能依靠此来判断
     if(ITEM_PATH_LIST.count()==0)
@@ -399,7 +428,7 @@ void QJDMdi::excuteFlow()
     // 输出参数文件
     QString argFileName=outputMainFlowArguFile(moduleNameList,module_PropertyList);
     // 执行
-    runProcess(argFileName);
+    runProcess(argFileName,flowName);
     // 这里需要弹出窗口,显示进程信息之类
 }
 
@@ -503,24 +532,50 @@ QString QJDMdi::outputMainFlowArguFile(QStringList nameList, QList<QStringList> 
     return fileName;
 }
 
-void QJDMdi::runProcess(QString arg)
+void QJDMdi::runProcess(QString arg,QString name)
 {
-    QStringList paralist;
+    QStringList paraFile;
     QString filepath=arg;
-    paralist.append(filepath);
-    qDebug()<<"Para List::"<<paralist;
+
+    QString str;
+    QFile argFile(filepath);
+    argFile.open(QFile::ReadOnly);
+    for(int i=0;i<3;i++)
+    {
+        str=argFile.readLine();
+    }
+    str=str.simplified();
+    //    qDebug()<<"~~str::"<<str;  // log文件
+    argFile.close();
+
+    paraFile.append(filepath);
+    qDebug()<<"Para List::"<<paraFile;
+
+
 
     /// --------------- 每执行一个，信息应当保存，直到被覆盖----------------///
-    QProcess *JDP=new QProcess;
-//    connect(JDP, SIGNAL(finished(int,QProcess::ExitStatus)),
-//            this, SLOT(processFinished( int, QProcess::ExitStatus)));
-
+    QJDProcess *JDP=new QJDProcess;
 //    JDP->start("./MainFlow",paralist);
-    JDP->start("geany");
+    JDP->start("/home/xtf/Project/TestUI/TestUI");
+    JDP->savePID();
+
+    //! 应当将paralist的第三行做为日志文件的参数,保存起来,做为直接显示在界面上
+
+    connect(JDP,SIGNAL(sigFinished(int,int,QProcess::ExitStatus)),
+            processWidget,SLOT(changeStatus(int,int,QProcess::ExitStatus)));
+
     /// --------------- 每执行一个，信息应当保存，直到被覆盖----------------///
-    QJDProcessWidget *processWidget=new QJDProcessWidget;
-    processWidget->addTask(QString::number(JDP->pid()));
+    processWidget->addTask(QString::number(JDP->pid()),name,str);
     processWidget->show();
+
+    /////////////////////////////////////////////////////////////////
+    // NEED TO BE DELETED !!!!
+    // 生成虚假日志文件,日志须由运行程序生成
+    QFile logFile(str);
+    logFile.open(QFile::WriteOnly);
+    QTextStream ts(&logFile);
+    ts<<str;
+    logFile.close();
 }
 
 void QJDMdi::parseModuleElement(QDomElement const& moduleNameEle)
@@ -653,9 +708,19 @@ void QJDMdi::parsePropertyElement(QDomElement const& property)
 void QJDMdi::showFunArgu(QString name,QString path)
 {
     // 调用qjdfunarguwidget 显示
-    // 下一个点击时 这个要主动关闭 但是要保留修改
+    /// 下一个点击时 这个要主动关闭 但是要保留修改
+
     qDebug()<<name<<path; // 最新的点击名称和路径
-    QJDFunArguWidget *funWidget=new QJDFunArguWidget;
+    QJDFunArguWidget *funWidget=new QJDFunArguWidget(this);
+    arguWidgetLimitList.append(funWidget);
+
+    if(arguWidgetLimitList.size()!=1)
+    {
+        QJDFunArguWidget *funWidgetDel=arguWidgetLimitList.at(0);
+        funWidgetDel->saveArgToXml();
+        funWidgetDel->close();
+        arguWidgetLimitList.removeAt(0);
+    }
     // 这里需要传进去完整路径,而不是文件名
     QMdiSubWindow *subWindow=currentSubWindow();
     QString flowPath=subWindow->toolTip();
@@ -684,4 +749,9 @@ void QJDMdi::listWidgetItemMidClicked(QListWidgetItem *item)
     listWidgetItemTooltip=item->toolTip();
 
     showFunArgu(listWidgetItemName,listWidgetItemTooltip);
+}
+
+void QJDMdi::showProcessWidget()
+{
+    processWidget->show();
 }

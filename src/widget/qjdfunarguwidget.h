@@ -15,6 +15,8 @@ signals:
     
 public slots:
     bool setData(QString name,QString path);
+    void saveArgToXml();
+
 private:
 
     QDomDocument domDocument;
@@ -48,7 +50,6 @@ private:
 
 private slots:
     void changeDisplayValue(int propertyListInt ,QStringList changeList);
-    void saveArgToXml();
 };
 
 #endif // QJDFUNARGUWIDGET_H

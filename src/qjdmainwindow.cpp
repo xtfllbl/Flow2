@@ -3,7 +3,6 @@
 #include <QDebug>
 #include <QLayout>
 #include <QFileSystemModel>
-#include <QSettings>
 #include <QFileDialog>
 #include <QMessageBox>
 
@@ -23,10 +22,6 @@ QJDMainWindow::QJDMainWindow(QWidget *parent) :
     QCoreApplication::setOrganizationName("JDSoft");
     QCoreApplication::setOrganizationDomain("jindisoft.com");
     QCoreApplication::setApplicationName("Flow2");
-    QSettings settings;
-    settings.setValue("test1",12);
-    int value=settings.value("test1").toInt();
-    qDebug()<<"value"<<value;
 
     pathLabel1=new QJDLabel;
     pathLabel1->setText("Address::");
@@ -82,8 +77,8 @@ QJDMainWindow::QJDMainWindow(QWidget *parent) :
 //    tabWidget->show();
     funcationSplitterWidget->hide();
 
-    setHomeDir("/home/xtf/Data/");
-    _HOME_DIR="/home/xtf/Data/";
+    _HOME_DIR=settings.value("HOME").toString();
+    setHomeDir(_HOME_DIR);
     areaWidget->setHome(_HOME_DIR);
 
     QHBoxLayout *pathLayout=new QHBoxLayout;
@@ -500,6 +495,7 @@ void QJDMainWindow::on_actionSetDataHome_triggered()
     if(homePath!="")
     {
         setHomeDir(homePath);  // it works
+        settings.setValue("HOME",homePath);
         _HOME_DIR=homePath;
         areaWidget->setHome(_HOME_DIR);
     }
@@ -525,6 +521,12 @@ void QJDMainWindow::creatNewArea(QString areaName)
     //1. 创建文件夹
     QDir newDir;
     newDir.setPath(getHomeDir());
+    if(newDir.exists(lowerCaseAreaName))
+    {
+        QMessageBox::warning(this,"Warning!","Do not creat the same AREA again!");
+        return;
+    }
+
     if(!newDir.mkdir(lowerCaseAreaName))
         qDebug()<<"Creat New Area Dir failed";
 
@@ -540,7 +542,7 @@ void QJDMainWindow::creatNewArea(QString areaName)
     newDesc.close();
 
     //3. 全局刷一下列表呢?还是添加到列表???
-    setHomeDir(getHomeDir());  // ??这样来不负责任通刷??
+    setHomeDir(getHomeDir());
 }
 
 void QJDMainWindow::creatNewLine(QString lineName)
@@ -549,11 +551,17 @@ void QJDMainWindow::creatNewLine(QString lineName)
     lowerCaseLineName=lineName.toLower();
     lowerCaseLineName.simplified();
     lowerCaseLineName.remove(" ");
-    qDebug()<<"creatNewArea::"<<lineName<<lowerCaseLineName;  // 所有大写阿,带空格的之类的统一小写,并且去空格
+    qDebug()<<"creatNewLine::"<<lineName<<lowerCaseLineName;  // 所有大写阿,带空格的之类的统一小写,并且去空格
 
     //1. 创建文件夹,需要获取当前area文件夹名称,通过当前的名称获取
     QDir newDir;
     newDir.setPath(areaWidget->getAbsolutePath());
+    if(newDir.exists(lowerCaseLineName))
+    {
+        QMessageBox::warning(this,"Warning!","Do not creat the same LINE again!");
+        return;
+    }
+
     if(!newDir.mkdir(lowerCaseLineName))
         qDebug()<<"Creat New Line Dir failed";
 
@@ -578,7 +586,7 @@ void QJDMainWindow::creatNewFlow(QString flowName)
     lowerCaseFlowName=flowName.toLower();
     lowerCaseFlowName.simplified();
     lowerCaseFlowName.remove(" ");
-    qDebug()<<"creatNewArea::"<<flowName<<lowerCaseFlowName;  // 所有大写阿,带空格的之类的统一小写,并且去空格
+    qDebug()<<"creatNewFlow::"<<flowName<<lowerCaseFlowName;  // 所有大写阿,带空格的之类的统一小写,并且去空格
 
     QString absolutePath;
     if(areaWidget->level()==2)
@@ -595,8 +603,28 @@ void QJDMainWindow::creatNewFlow(QString flowName)
     //1. 创建文件夹
     QDir newDir;
     newDir.setPath(absolutePath);
-    if(!newDir.mkdir(lowerCaseFlowName))   // 工作正常??
+    if(newDir.exists(lowerCaseFlowName))
+    {
+        QMessageBox::warning(this,"Warning!","Do not creat the same FLOW again!");
+        return;
+    }
+    if(!newDir.mkdir(lowerCaseFlowName))
+    {
         qDebug()<<"Creat New Flow Dir failed";
+    }
+    else
+    {
+        QDir logDir;
+        QString logDirPath;
+        logDirPath=absolutePath+"/"+lowerCaseFlowName;
+        qDebug()<<"logDirPath::"<<logDirPath;
+        logDir.setPath(logDirPath);
+
+        if(!logDir.mkdir("log"))
+        {
+            qDebug()<<"Creat New Flow Log Dir failed";
+        }
+    }
 
     //2. 创建.Desc
     QFile newDesc;
@@ -621,7 +649,7 @@ void QJDMainWindow::on_actionExcuteFlow_triggered()
     //    2. 按照顺序提取各个xml内容并输出到输出文件;
     //    3. 调用程序
     /// 应当传输信号进mdi,或者mdi传出??
-    mdiWidget->excuteFlow();
+    mdiWidget->excuteFlow(mdiWidget->currentSubWindow()->windowTitle());
 
 }
 
@@ -683,6 +711,10 @@ void QJDMainWindow::excuteFlowSlot()
 {
     /// 先显示,再执行,有问题
     showExistFlow();
-    mdiWidget->excuteFlow();
+    mdiWidget->excuteFlow(mdiWidget->currentSubWindow()->windowTitle());
+}
 
+void QJDMainWindow::on_actionJob_Viewer_triggered()
+{
+    mdiWidget->showProcessWidget();
 }

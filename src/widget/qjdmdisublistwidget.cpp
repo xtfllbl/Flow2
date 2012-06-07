@@ -6,21 +6,18 @@
 QJDMdiSubListWidget::QJDMdiSubListWidget(QWidget *parent) :
     QListWidget(parent)
 {
-    this->setContextMenuPolicy(Qt::DefaultContextMenu);
     rightClickedItem=new QListWidgetItem;
 
+    this->setContextMenuPolicy(Qt::DefaultContextMenu);
     setSelectionMode(QAbstractItemView::ExtendedSelection);  // 多选条目
 
     menu=new QMenu;
     actDelFlow=new QAction("Delete Flow",this);
     actOpenCloseFlow=new QAction("Open/Close Flow",this);
-//    actNewFlow=new QAction("new flow",this);
     menu->addAction(actDelFlow);
     menu->addAction(actOpenCloseFlow);
-//    menu->addAction(actNewFlow);
     connect(actDelFlow,SIGNAL(triggered()),this,SLOT(delFlowSlot()));
     connect(actOpenCloseFlow,SIGNAL(triggered()),this,SLOT(openCloseFlowSlot()));
-//    connect(actNewFlow,SIGNAL(triggered()),this,SLOT(actNewFlowClicked()));
 }
 
 void QJDMdiSubListWidget::contextMenuEvent(QContextMenuEvent *)

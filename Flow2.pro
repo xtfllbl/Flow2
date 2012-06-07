@@ -41,7 +41,10 @@ SOURCES += main.cpp\
     src/widget/QJD/qjdradiobutton.cpp \
     src/widget/QJD/qjdbuttongroup.cpp \
     src/widget/QJD/qjdpushbutton.cpp \
-    src/widget/qjdprocesswidget.cpp
+    src/widget/qjdprocesswidget.cpp \
+    src/qjdprocess.cpp \
+    src/qjdtextbrowser.cpp \
+    src/qjdhighlighter.cpp
 
 HEADERS  += src/qjdmainwindow.h \
     src/widget/qjdmdi.h \
@@ -68,9 +71,13 @@ HEADERS  += src/qjdmainwindow.h \
     src/widget/QJD/qjdradiobutton.h \
     src/widget/QJD/qjdbuttongroup.h \
     src/widget/QJD/qjdpushbutton.h \
-    src/widget/qjdprocesswidget.h
+    src/widget/qjdprocesswidget.h \
+    src/qjdprocess.h \
+    src/qjdtextbrowser.h \
+    src/qjdhighlighter.h
 
-FORMS    += src/qjdmainwindow.ui
+FORMS    += src/qjdmainwindow.ui \
+    src/qjdtextbrowser.ui
 
 RESOURCES += \
     images.qrc
