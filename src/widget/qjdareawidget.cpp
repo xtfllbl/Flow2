@@ -151,9 +151,9 @@ void QJDAreaWidget::mouseDoubleClickEvent(QMouseEvent *event)
 
 void QJDAreaWidget::returnPath(QTreeWidgetItem* item,int col)
 {
-    qDebug()<<"item Clicked --> returnPath";
     QString path=item->toolTip(0);
-    emit sigItemPath(path);   // 这个path是不对的....
+    qDebug()<<"item Clicked --> returnPath"<<path;
+    emit sigItemPath(path);
 
 
     //! item clicked 竟然不算右键单击的情况,很困扰,难道需要手工写一个?

@@ -78,8 +78,11 @@ QJDMainWindow::QJDMainWindow(QWidget *parent) :
     funcationSplitterWidget->hide();
 
     _HOME_DIR=settings.value("HOME").toString();
-    setHomeDir(_HOME_DIR);
     areaWidget->setHome(_HOME_DIR);
+    // area 必须先connect
+    connect(areaWidget,SIGNAL(sigItemPath(QString)),pathLabel2,SLOT(setText(QString)));
+    connect(areaWidget,SIGNAL(sigItemPath(QString)),propertyWidget,SLOT(setPropertyData(QString)));
+    setHomeDir(_HOME_DIR);
 
     QHBoxLayout *pathLayout=new QHBoxLayout;
     pathLayout->addWidget(pathLabel1);
@@ -97,9 +100,6 @@ QJDMainWindow::QJDMainWindow(QWidget *parent) :
     ui->centralWidget->setLayout(vLayout);
 
     // area
-    connect(areaWidget,SIGNAL(sigItemPath(QString)),pathLabel2,SLOT(setText(QString)));
-    connect(areaWidget,SIGNAL(sigItemPath(QString)),propertyWidget,SLOT(setPropertyData(QString)));
-
     connect(areaWidget,SIGNAL(sigActNewAreaClicked()),this,SLOT(on_actionNewArea_triggered()));
     connect(areaWidget,SIGNAL(sigActNewLineClicked()),this,SLOT(on_actionNewLine_triggered()));
     connect(areaWidget,SIGNAL(sigActNewFlowClicked()),this,SLOT(on_actionNewFlow_triggered()));
@@ -242,6 +242,13 @@ void QJDMainWindow::setHomeDir(QString homePath)
         flowPathList.clear();
         lineStringList.clear();
         linePathList.clear();
+    }
+
+    if(!areaStringList.isEmpty())
+    {
+//        qDebug()<<areaWidget->topLevelItem(0)->text(0);
+        areaWidget->setCurrentItem(areaWidget->topLevelItem(0));
+        areaWidget->returnPath(areaWidget->currentItem(),areaWidget->currentColumn());
     }
 }
 

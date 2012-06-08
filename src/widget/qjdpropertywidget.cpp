@@ -15,6 +15,7 @@ QJDPropertyWidget::QJDPropertyWidget()
 // 缺陷:1.name 只有descname才能显示,否则没有,size目前只有目录有size,文件没有
 void QJDPropertyWidget::setPropertyData(QString path)
 {
+    qDebug()<<"setPropertyData";
     QStandardItemModel *model=new QStandardItemModel();
     //设置大小
     model->setColumnCount(5);    //列
