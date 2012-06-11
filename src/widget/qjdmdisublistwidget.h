@@ -15,6 +15,8 @@ signals:
     void sigMidButtonClicked(QListWidgetItem *item);
     void sigDelFlowClicked(QList<QListWidgetItem *>);
     void sigOpenCloseFlowClicked(QList<QListWidgetItem *>);
+    void sigMdiSubClose();
+
 public slots:
 private:
     QMenu *menu;
@@ -24,6 +26,10 @@ private:
 
     void contextMenuEvent(QContextMenuEvent *);
     void mousePressEvent(QMouseEvent *event);
+
+    void closeEvent(QCloseEvent *);
+    void dragEnterEvent (QDragEnterEvent *event);
+    void dropEvent (QDropEvent *event);
 private slots:
     void midClickedSlot(QListWidgetItem *item);
     void delFlowSlot();

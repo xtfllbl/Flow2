@@ -23,9 +23,18 @@ QJDProcessWidget::QJDProcessWidget(QWidget *parent) :
     menuBar=new QMenuBar();
     tableWidget=new QJDProcessTableWidget();
 
-    menuBar->addMenu("File");
-    tableWidget->setSortingEnabled(false);
+    QMenu *fileMenu=new QMenu("File");
+    QAction *actClearHistory=new QAction(this);
+    actClearHistory->setText("Clear History");
+    QAction *actClose=new QAction(this);
+    actClose->setText("Close");
+    fileMenu->addAction(actClearHistory);
+    fileMenu->addAction(actClose);
+    menuBar->addMenu(fileMenu);  // 39->49->69->90
+    connect(actClearHistory,SIGNAL(triggered()),tableWidget,SLOT(clearHistorySlot()));
+    connect(actClose,SIGNAL(triggered()),this,SLOT(close()));
 
+    tableWidget->setSortingEnabled(false);
     tableWidget->setColumnCount(6); // 否则设置抬头无效
     tableWidget->setRowCount(1);
 
@@ -290,4 +299,28 @@ void QJDProcessTableWidget::delSlot()
 //        qDebug()<<"remove row:"<<rows.at(i);
         this->removeRow(rows.at(i));
     }
+
+    this->saveHistory();
+}
+
+void QJDProcessTableWidget::clearHistorySlot()
+{
+    int ret=QMessageBox::warning(this,"Warning!","Do you really want to clear ALL the history?",
+                                 QMessageBox::Ok|QMessageBox::Cancel);
+    switch (ret)
+    {
+    case QMessageBox::Ok:
+        qDebug()<<"start remove"<<rowCount();
+        for(int i=rowCount()-1;i>=0;i--)
+        {
+            this->removeRow(i);
+        }
+        this->saveHistory();
+        break;
+    case QMessageBox::Cancel:
+        break;
+    default:
+        break;
+    }
+
 }

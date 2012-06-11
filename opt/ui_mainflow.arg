@@ -1,8 +1,7 @@
 1
 /home/xtf/Project/Flow2/flow
-/home/xtf/Data/2/line1/a/log/2::line1::a_126894125696.log
+/home/xtf/Data/2/line1/aaa/log/2::line1::aaa_12611105123734.log
 99
-PickTest|jdtpath=;minvelo=1500;maxvel=2000;tw=40;pickFileName=/home/lub/program/qt/flow/pick1.pick;
+ReSample|resamplerate=4;
 Data Input|infilename=/home/lub/data/envrtest/0304-8bit;
 ReSample|resamplerate=4;
-FirstBreakAutoPick|jdthpath=null;minvelo=1500;maxvel=2000;tw=50;smooth=1;isoutput=1;pickFileName=/home/lub/program/qt/flow/pick2.pick;

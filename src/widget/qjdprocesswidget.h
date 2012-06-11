@@ -25,6 +25,8 @@ private:
 public slots:
     void saveHistory();
     void loadHistory();
+
+    void clearHistorySlot();
 private slots:
     void showLogSlot();
     void delSlot();
@@ -50,7 +52,6 @@ public slots:
     void addTask(QString pid,QString name,QString log);
     void changeStatus(int pid, int exitCode, QProcess::ExitStatus exitStatus);
 private slots:
-
 };
 
 

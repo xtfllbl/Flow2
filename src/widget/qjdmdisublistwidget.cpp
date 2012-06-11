@@ -18,6 +18,12 @@ QJDMdiSubListWidget::QJDMdiSubListWidget(QWidget *parent) :
     menu->addAction(actOpenCloseFlow);
     connect(actDelFlow,SIGNAL(triggered()),this,SLOT(delFlowSlot()));
     connect(actOpenCloseFlow,SIGNAL(triggered()),this,SLOT(openCloseFlowSlot()));
+
+    // 拖拽
+    this->setAcceptDrops(true);
+    this->setDragEnabled(true);
+    setDragDropMode(QAbstractItemView::InternalMove);
+
 }
 
 void QJDMdiSubListWidget::contextMenuEvent(QContextMenuEvent *)
@@ -56,4 +62,22 @@ void QJDMdiSubListWidget::delFlowSlot()
 void QJDMdiSubListWidget::openCloseFlowSlot()
 {
     emit sigOpenCloseFlowClicked(selectedItems());
+}
+
+void QJDMdiSubListWidget::closeEvent(QCloseEvent *)
+{
+    qDebug()<<"QJDMdiSubListWidget::close";  // 的确运行了
+    emit sigMdiSubClose();
+}
+
+void QJDMdiSubListWidget::dragEnterEvent (QDragEnterEvent *event)
+{
+    QListWidget::dragEnterEvent(event);
+
+}
+
+void QJDMdiSubListWidget::dropEvent (QDropEvent *event)
+{
+    QListWidget::dropEvent(event);
+
 }

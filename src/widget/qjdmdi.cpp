@@ -22,19 +22,6 @@ QJDMdi::QJDMdi()
     setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 
     processWidget=new QJDProcessWidget(/*this*/); // 为什么不能加this???
-
-    /// 添加sub要信号传过来再添加,sub中的内容则靠funcation list
-    // 从area widget当中 新建 flow 传过来
-//    QJDMdiSubListWidget *tab1=new QJDMdiSubListWidget;
-//    tab1->setMinimumSize(200,200);
-//    tab1->setWindowTitle("test1");
-
-//    QMdiSubWindow *subWindow1 = new QMdiSubWindow;
-//    subWindow1->setWidget(tab1);
-//    subWindow1->setAttribute(Qt::WA_DeleteOnClose);
-//    this->addSubWindow(subWindow1);
-
-//    connect(this,SIGNAL(subWindowActivated(QMdiSubWindow*)),this,SLOT(windowChoosed(QMdiSubWindow*)));
 }
 
 void QJDMdi::windowChoosed(QMdiSubWindow *window)
@@ -51,6 +38,8 @@ void QJDMdi::newSubWindow(QString subName,QString linePath)
     qDebug()<<"QJDMdi::newSubWindow"<<subName;
     QJDMdiSubListWidget *listWidget=new QJDMdiSubListWidget;
     listWidget->setMinimumSize(200,200);
+    // 关闭保存
+    connect(listWidget,SIGNAL(sigMdiSubClose()),this,SLOT(refreshPosFile()));
 
     // Area::Line::Flow
     QStringList areaLineFlow=linePath.split("/",QString::SkipEmptyParts);
@@ -91,11 +80,11 @@ void QJDMdi::showExistSubWindow(QString flowName, QString flowPath)
     qDebug()<<flowName<<flowPath;  //那可是要从flowPath下面的pos文件里面读取顺序
 
 
-
-
     /// 0. 先要进行重复处理,对flowPath进行审查
     QJDMdiSubListWidget *listWidget=new QJDMdiSubListWidget;
     listWidget->setMinimumSize(200,200);
+    // 关闭保存
+    connect(listWidget,SIGNAL(sigMdiSubClose()),this,SLOT(refreshPosFile()));
 
     // Area::Line::Flow
     QStringList areaLineFlow=flowPath.split("/",QString::SkipEmptyParts);
