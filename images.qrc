@@ -57,5 +57,8 @@
         <file>src/images/document-open.png</file>
         <file>src/images/edit-copy.png</file>
         <file>src/images/edit-select-all.png</file>
+        <file>src/images/gtk-no.png</file>
+        <file>src/images/list-remove.png</file>
+        <file>src/images/media-playback-start.png</file>
     </qresource>
 </RCC>

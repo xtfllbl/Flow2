@@ -7,9 +7,9 @@
 #include <QDesktopWidget>
 #include <QApplication>
 #include <QFile>
+#include "signal.h"
+#include "errno.h"
 
-// TODO: 添加保存历史记录,新建的时候是需要读取历史记录的.
-// 如何保存
 QJDProcessWidget::QJDProcessWidget(QWidget *parent) :
     QWidget(parent)
 {
@@ -23,16 +23,53 @@ QJDProcessWidget::QJDProcessWidget(QWidget *parent) :
     menuBar=new QMenuBar();
     tableWidget=new QJDProcessTableWidget();
 
+    // Menu "File"
     QMenu *fileMenu=new QMenu("File");
     QAction *actClearHistory=new QAction(this);
     actClearHistory->setText("Clear History");
     QAction *actClose=new QAction(this);
     actClose->setText("Close");
     fileMenu->addAction(actClearHistory);
-    fileMenu->addAction(actClose);
-    menuBar->addMenu(fileMenu);  // 39->49->69->90
+    fileMenu->addAction(actClose);  
+
+    menuBar->addMenu(fileMenu);
     connect(actClearHistory,SIGNAL(triggered()),tableWidget,SLOT(clearHistorySlot()));
     connect(actClose,SIGNAL(triggered()),this,SLOT(close()));
+
+    // Menu "Action"
+    QMenu *actionMenu=new QMenu("Action");
+    QAction *actContinue=new QAction(this);
+    actContinue->setText("Continue");
+    actContinue->setIcon(QIcon(":/src/images/excute.png"));
+
+    QAction *actStop=new QAction(this);
+    actStop->setText("Stop");
+    actStop->setIcon(QIcon(":/src/images/norun.png"));
+
+    QAction *actPause=new QAction(this);
+    actPause->setText("Pause");
+    actPause->setIcon(QIcon(":/src/images/media-playback-stop.png"));
+
+    QAction *actKill=new QAction(this);
+    actKill->setText("Kill");
+    actKill->setIcon(QIcon(":/src/images/gtk-no.png"));
+
+    QAction *actTer=new QAction(this);
+    actTer->setText("Terminate");
+    actTer->setIcon(QIcon(":/src/images/process-stop.png"));
+
+    actionMenu->addAction(actContinue);
+    actionMenu->addAction(actStop);
+    actionMenu->addAction(actPause);
+    actionMenu->addAction(actKill);
+    actionMenu->addAction(actTer);
+
+    menuBar->addMenu(actionMenu);
+    connect(actContinue,SIGNAL(triggered()),tableWidget,SLOT(conProcess()));
+    connect(actStop,SIGNAL(triggered()),tableWidget,SLOT(stopProcess()));
+    connect(actPause,SIGNAL(triggered()),tableWidget,SLOT(hanProcess()));
+    connect(actKill,SIGNAL(triggered()),tableWidget,SLOT(killProcess()));
+    connect(actTer,SIGNAL(triggered()),tableWidget,SLOT(terProcess()));
 
     tableWidget->setSortingEnabled(false);
     tableWidget->setColumnCount(6); // 否则设置抬头无效
@@ -107,7 +144,6 @@ void QJDProcessWidget::addTask(QString pid,QString name,QString log)
 
     tableWidget->saveHistory();
     tableWidget->setCurrentItem(itemName);  //这就可以scroll了
-//    tableWidget->scrollToBottom();
 }
 
 // 多进程时,需要依靠pid来修改行
@@ -163,6 +199,38 @@ QJDProcessTableWidget::QJDProcessTableWidget(QWidget *parent) :
     actDelLog=new QAction("Delete Record",this);
     menu->addAction(actDelLog);
     connect(actDelLog,SIGNAL(triggered()),this,SLOT(delSlot()));
+
+    actContinue=new QAction(this);
+    actContinue->setText("Continue");
+    actContinue->setIcon(QIcon(":/src/images/excute.png"));
+
+    actStop=new QAction(this);
+    actStop->setText("Stop");
+    actStop->setIcon(QIcon(":/src/images/norun.png"));
+
+    actPause=new QAction(this);
+    actPause->setText("Pause");
+    actPause->setIcon(QIcon(":/src/images/media-playback-stop.png"));
+
+    actKill=new QAction(this);
+    actKill->setText("Kill");
+    actKill->setIcon(QIcon(":/src/images/gtk-no.png"));
+
+    actTer=new QAction(this);
+    actTer->setText("Terminate");
+    actTer->setIcon(QIcon(":/src/images/process-stop.png"));
+
+    menu->addAction(actContinue);
+    menu->addAction(actStop);
+    menu->addAction(actPause);
+    menu->addAction(actKill);
+    menu->addAction(actTer);
+
+    connect(actContinue,SIGNAL(triggered()),this,SLOT(conProcess()));
+    connect(actStop,SIGNAL(triggered()),this,SLOT(stopProcess()));
+    connect(actPause,SIGNAL(triggered()),this,SLOT(hanProcess()));
+    connect(actKill,SIGNAL(triggered()),this,SLOT(killProcess()));
+    connect(actTer,SIGNAL(triggered()),this,SLOT(terProcess()));
 }
 
 void QJDProcessTableWidget::contextMenuEvent(QContextMenuEvent *)
@@ -323,4 +391,74 @@ void QJDProcessTableWidget::clearHistorySlot()
         break;
     }
 
+}
+
+void QJDProcessTableWidget::killProcess()
+{
+    send_to_selected(SIGKILL);
+}
+
+void QJDProcessTableWidget::terProcess()
+{
+    send_to_selected(SIGTERM);
+}
+
+/// 虽说是暂停,但一般就关闭了
+void QJDProcessTableWidget::hanProcess()
+{
+    send_to_selected(SIGHUP);
+}
+void QJDProcessTableWidget::stopProcess()
+{
+    send_to_selected(SIGSTOP);
+}
+void QJDProcessTableWidget::conProcess()
+{
+    send_to_selected(SIGCONT);
+}
+
+// 需要当前的pid,还需要能多选处理...
+void QJDProcessTableWidget::send_to_selected(int sig)
+{
+    // 选中行
+    QList<int> rows;
+    for(int i=0;i<this->selectedItems().size();i++)
+    {
+        int j=this->selectedItems().at(i)->row();
+        if(!rows.contains(j))
+        {
+            rows.append(j);
+        }
+    }
+
+    // 取得pid
+    QList<int> processID_List;
+    for(int i=0;i<rows.size();i++)
+    {
+        // 这里没有hashRow了
+        processID_List.append(   this->item(rows.at(i),2)->text().toInt()   );
+    }
+
+    // 完成信号传输
+    for(int i=0;i<processID_List.size();i++)
+    {
+        sendsig(processID_List.at(i), sig);
+    }
+}
+
+void QJDProcessTableWidget::sendsig(int pid, int sig)
+{
+    if(kill(pid, sig) < 0)
+    {
+        if(errno == EPERM)
+        {
+            QString s;
+            s.sprintf("You do not have permission to send a signal to"
+                      " process %d (", pid);
+            s.append(").\n"
+                     "Only the super-user and the owner of the process"
+                     " may send signals to it.");
+            QMessageBox::warning(this, "Permission denied", s);
+        }
+    }
 }

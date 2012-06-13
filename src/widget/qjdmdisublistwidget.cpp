@@ -73,11 +73,9 @@ void QJDMdiSubListWidget::closeEvent(QCloseEvent *)
 void QJDMdiSubListWidget::dragEnterEvent (QDragEnterEvent *event)
 {
     QListWidget::dragEnterEvent(event);
-
 }
 
 void QJDMdiSubListWidget::dropEvent (QDropEvent *event)
 {
     QListWidget::dropEvent(event);
-
 }

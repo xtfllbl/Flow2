@@ -548,8 +548,8 @@ void QJDMdi::runProcess(QString arg,QString name)
     JDP->start("/home/xtf/Project/TestUI/TestUI");
     JDP->savePID();
 
-    //! 应当将paralist的第三行做为日志文件的参数,保存起来,做为直接显示在界面上
 
+    /// 主程序直接退出,导致状态错误等等,如何处理
     connect(JDP,SIGNAL(sigFinished(int,int,QProcess::ExitStatus)),
             processWidget,SLOT(changeStatus(int,int,QProcess::ExitStatus)));
 

@@ -20,6 +20,11 @@ private:
     QMenu *menu;
     QAction *actShowLog;
     QAction *actDelLog;
+    QAction *actContinue;
+    QAction *actStop;
+    QAction *actPause;
+    QAction *actKill;
+    QAction *actTer;
     QJDTextBrowser *textBrowser;
 
 public slots:
@@ -31,7 +36,13 @@ private slots:
     void showLogSlot();
     void delSlot();
 
-
+    void killProcess();
+    void terProcess();
+    void hanProcess();
+    void stopProcess();
+    void conProcess();
+    void send_to_selected(int);
+    void sendsig(int, int);
 };
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -52,6 +63,7 @@ public slots:
     void addTask(QString pid,QString name,QString log);
     void changeStatus(int pid, int exitCode, QProcess::ExitStatus exitStatus);
 private slots:
+
 };
 
 
