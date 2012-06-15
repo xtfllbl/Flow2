@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!DOCTYPE ui>
 <ui version="1.0">
-<module name="ShotAttributesExtraction" version="1.0" showname="Shot Attributes Extraction">
+<module name="ShotAttributesExtraction" version="1.0">
 <property name="jdthpath">
 	<desc>jdthpath</desc>
 	<datatype>string</datatype>

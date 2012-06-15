@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!DOCTYPE ui>
 <ui version="1.0">
-<module name="FirstBreakAutoPick" version="1.0" showname="First Break Auto Pick">
+<module name="FirstBreakAutoPick" version="1.0">
 <property name="jdthpath">
 	<desc>jdthpath</desc>
 	<datatype>string</datatype>

@@ -138,7 +138,7 @@ void QJDMdi::showExistSubWindow(QString flowName, QString flowPath)
             listItem->setIcon(QIcon(":/src/images/run.png"));
             if(funStatusList.at(i)=="0")
             {
-                listItem->setBackgroundColor(QColor(180,180,180));
+                listItem->setTextColor(QColor(200,200,200));
                 listItem->setIcon(QIcon(":/src/images/norun.png"));
             }
             listWidget->addItem(listItem);
@@ -291,7 +291,8 @@ void QJDMdi::openCloseFlow(QList<QListWidgetItem *> itemList)
         else
         {
             item->setStatusTip("0");
-            item->setBackgroundColor(QColor(188,188,188));
+//            item->setBackgroundColor(QColor(188,188,188));
+            item->setTextColor(QColor(200,200,200));
             item->setIcon(QIcon(":/src/images/norun.png"));
         }
     }
@@ -599,7 +600,7 @@ void QJDMdi::parsePropertyElement(QDomElement const& property)
 //        qDebug()<<"fileread write in as:: "<<property.attribute("name")<<displayType.text();
 //        textStream<<property.attribute("name")<<"="<<displayType.text()<<";";
         propertyNameAndValue=property.attribute("name")+"="+displayType.text();
-        qDebug()<<propertyNameAndValue;
+//        qDebug()<<propertyNameAndValue;
         propertyNameAndValueList.append(propertyNameAndValue);
         propertyNameAndValue.clear();
     }
@@ -608,7 +609,7 @@ void QJDMdi::parsePropertyElement(QDomElement const& property)
 //        qDebug()<<"line/spin write in as:: "<<property.attribute("name")<<displayType.text();
 //        textStream<<property.attribute("name")<<"="<<displayType.text()<<";";
         propertyNameAndValue=property.attribute("name")+"="+displayType.text();
-        qDebug()<<propertyNameAndValue;
+//        qDebug()<<propertyNameAndValue;
 
         propertyNameAndValueList.append(propertyNameAndValue);
         propertyNameAndValue.clear();
@@ -620,7 +621,7 @@ void QJDMdi::parsePropertyElement(QDomElement const& property)
 //            qDebug()<<"check write in as:: "<<property.attribute("name")<<"1";
 //            textStream<<property.attribute("name")<<"="<<"1"<<";";
             propertyNameAndValue=property.attribute("name")+"=1";
-            qDebug()<<propertyNameAndValue;
+//            qDebug()<<propertyNameAndValue;
 
             propertyNameAndValueList.append(propertyNameAndValue);
             propertyNameAndValue.clear();
@@ -630,7 +631,7 @@ void QJDMdi::parsePropertyElement(QDomElement const& property)
 //            qDebug()<<"check write in as:: "<<property.attribute("name")<<"0";
 //            textStream<<property.attribute("name")<<"="<<"0"<<";";
             propertyNameAndValue=property.attribute("name")+"=0";
-            qDebug()<<propertyNameAndValue;
+//            qDebug()<<propertyNameAndValue;
 
             propertyNameAndValueList.append(propertyNameAndValue);
             propertyNameAndValue.clear();
@@ -648,7 +649,7 @@ void QJDMdi::parsePropertyElement(QDomElement const& property)
 //                qDebug()<<"combo write in as:: "<<property.attribute("name")<<option.attribute("value");
 //                textStream<<property.attribute("name")<<"="<<option.attribute("value")<<";";
                 propertyNameAndValue=property.attribute("name")+"="+option.attribute("value");
-                qDebug()<<propertyNameAndValue;
+//                qDebug()<<propertyNameAndValue;
 
                 propertyNameAndValueList.append(propertyNameAndValue);
                 propertyNameAndValue.clear();
@@ -666,7 +667,7 @@ void QJDMdi::parsePropertyElement(QDomElement const& property)
 //            qDebug()<<"combo write in as:: "<<property.attribute("name")<<option.attribute("value");
 //            textStream<<property.attribute("name")<<"="<<option.attribute("value")<<";";
             propertyNameAndValue=property.attribute("name")+"="+option.attribute("value");
-            qDebug()<<propertyNameAndValue;
+//            qDebug()<<propertyNameAndValue;
 
             propertyNameAndValueList.append(propertyNameAndValue);
             propertyNameAndValue.clear();
@@ -684,13 +685,22 @@ void QJDMdi::parsePropertyElement(QDomElement const& property)
 //                qDebug()<<"radio write in as:: "<<property.attribute("name")<<option.attribute("value");
 //                textStream<<property.attribute("name")<<"="<<option.attribute("value")<<";";
                 propertyNameAndValue=property.attribute("name")+"="+option.attribute("value");
-                qDebug()<<propertyNameAndValue;
+//                qDebug()<<propertyNameAndValue;
 
                 propertyNameAndValueList.append(propertyNameAndValue);
                 propertyNameAndValue.clear();
             }
             option=option.nextSiblingElement("option");
         }
+    }
+    // 特殊类型,不做显示,仅作为输出,用于表达模块类型
+    if(widgetType=="type")
+    {
+        propertyNameAndValue=property.attribute("name")+"="+displayType.text();
+//        qDebug()<<propertyNameAndValue;
+
+        propertyNameAndValueList.append(propertyNameAndValue);
+        propertyNameAndValue.clear();
     }
 }
 

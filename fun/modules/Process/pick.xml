@@ -1,8 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!DOCTYPE ui>
 <ui version="1.0">
-<module name="PickTest" version="1.0" showname="Pick Test">
-
+<module name="PickTest" version="1.0" >
 <property name="jdtpath">
 	<desc>program path</desc>
 	<datatype>string</datatype>

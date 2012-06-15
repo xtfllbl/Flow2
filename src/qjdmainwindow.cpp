@@ -83,6 +83,7 @@ QJDMainWindow::QJDMainWindow(QWidget *parent) :
     connect(areaWidget,SIGNAL(sigItemPath(QString)),pathLabel2,SLOT(setText(QString)));
     connect(areaWidget,SIGNAL(sigItemPath(QString)),propertyWidget,SLOT(setPropertyData(QString)));
     setHomeDir(_HOME_DIR);
+    areaWidget->expandAll();
 
     QHBoxLayout *pathLayout=new QHBoxLayout;
     pathLayout->addWidget(pathLabel1);
@@ -137,6 +138,7 @@ QJDMainWindow::~QJDMainWindow()
 void QJDMainWindow::refreshList()
 {
     setHomeDir(getHomeDir());
+    areaWidget->expandAll();
 }
 /// TODO:名称和路径需要联系起来
 // 不能使用QHash ,会出现string相同的情况,那用什么方法呢
@@ -424,6 +426,18 @@ void QJDMainWindow::on_actionDelArea_triggered()
            break;
      }
 
+     /// 需要删掉工区下的所有窗口,如何找出来呢???
+     QString title=areaWidget->currentItem()->parent()->text(0)+"::"+
+             areaWidget->currentItem()->text(0);
+     QList<QString> valueList=mdiWidget->hashSubMdiName.values();
+     for(int i=0;i<valueList.size();i++)
+     {
+         if(valueList.at(i).contains(title,Qt::CaseInsensitive))
+         {
+             mdiWidget->removeSubWindow(mdiWidget->hashSubMdiName.key(valueList.at(i)));
+         }
+     }
+
      areaWidget->removeCurrentArea();
 }
 
@@ -449,6 +463,18 @@ void QJDMainWindow::on_actionDelLine_triggered()
        default:
            // should never be reached
            break;
+     }
+
+     /// 需要删掉线下的所有窗口,如何找出来呢???
+     QString title=areaWidget->currentItem()->parent()->text(0)+"::"+
+             areaWidget->currentItem()->text(0);
+     QList<QString> valueList=mdiWidget->hashSubMdiName.values();
+     for(int i=0;i<valueList.size();i++)
+     {
+         if(valueList.at(i).contains(title,Qt::CaseInsensitive))
+         {
+             mdiWidget->removeSubWindow(mdiWidget->hashSubMdiName.key(valueList.at(i)));
+         }
      }
 
      areaWidget->removeCurrentLine_Flow();
@@ -478,6 +504,14 @@ void QJDMainWindow::on_actionDelFlow_triggered()
            break;
      }
 
+     // 这个流程如果已经打开的话,也需要在界面处进行关闭
+//     mdiWidget->removeSubWindow();
+
+     QString title=areaWidget->currentItem()->parent()->parent()->text(0)+"::"+
+             areaWidget->currentItem()->parent()->text(0)+"::"+areaWidget->currentItem()->text(0);
+//     qDebug()<<title;
+     mdiWidget->removeSubWindow(mdiWidget->hashSubMdiName.key(title));
+
      areaWidget->removeCurrentLine_Flow();
 }
 
@@ -505,6 +539,7 @@ void QJDMainWindow::on_actionSetDataHome_triggered()
         settings.setValue("HOME",homePath);
         _HOME_DIR=homePath;
         areaWidget->setHome(_HOME_DIR);
+        areaWidget->expandAll();
     }
     else
     {
@@ -550,6 +585,7 @@ void QJDMainWindow::creatNewArea(QString areaName)
 
     //3. 全局刷一下列表呢?还是添加到列表???
     setHomeDir(getHomeDir());
+    areaWidget->expandAll();
 }
 
 void QJDMainWindow::creatNewLine(QString lineName)
@@ -585,6 +621,7 @@ void QJDMainWindow::creatNewLine(QString lineName)
 
     //3. 全局刷一下列表呢?还是添加到列表???
     setHomeDir(getHomeDir());
+    areaWidget->expandAll();
 }
 
 void QJDMainWindow::creatNewFlow(QString flowName)
@@ -646,6 +683,7 @@ void QJDMainWindow::creatNewFlow(QString flowName)
 
     //3. 全局刷一下列表呢?还是添加到列表???
     setHomeDir(getHomeDir());
+    areaWidget->expandAll();
 }
 
 void QJDMainWindow::on_actionExcuteFlow_triggered()

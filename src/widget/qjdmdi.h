@@ -13,6 +13,8 @@ class QJDMdi : public QMdiArea
     Q_OBJECT
 public:
     QJDMdi();
+
+    QHash<QMdiSubWindow *,QString> hashSubMdiName;
 private:
     QHash<QMdiSubWindow *,QJDMdiSubListWidget *> hashWindow_List;
 //    QList<QStringList> moduleList; //whats this monster,毕竟一边处理一边写文件不太好
@@ -34,7 +36,6 @@ private:
 
     QList<QJDFunArguWidget *> arguWidgetLimitList;
 
-    QHash<QMdiSubWindow *,QString> hashSubMdiName;
 
 public slots:
     void newSubWindow(QString subName,QString linePath);
