@@ -25,6 +25,7 @@ QJDFileChooseSave::QJDFileChooseSave(QWidget *parent) :
     this->setLayout(vLayout);
 
     connect(lineEdit,SIGNAL(textChanged(QString)),this,SLOT(emitEditFinished()));
+    connect(comboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(emitEditFinished()));
 }
 
 void QJDFileChooseSave::setPropertyList(QStringList argList)
@@ -42,15 +43,10 @@ void QJDFileChooseSave::emitEditFinished()
 //    qDebug()<<"QJDFileChooseRead::emitEditFinished";
     // 自动加了路径了,下一次打开的时候呢?
     QString value;
-    if(!lineEdit->text().contains("/"))
-    {
-        value=DATA_PATH+"/"+comboBox->currentText()+"/"+lineEdit->text();
-    }
-    else
-        value=lineEdit->text();
+    value=DATA_PATH+"/"+comboBox->currentText()+"/"+lineEdit->text();
 
     QStringList list;
-    list<<PROPERTY<<DESC<<DATATYPE<<DISPLAYTYPE<<value<<OPTION;
+    list<<PROPERTY<<DESC<<comboBox->currentText()<<DISPLAYTYPE<<value<<OPTION;
     emit sigFileChooseSaveEditChanged(propertyInt,list);
 }
 

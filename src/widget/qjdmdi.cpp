@@ -581,6 +581,7 @@ void QJDMdi::parsePropertyElement(QDomElement const& property)
     // 需要考,考虑控件类型
     QDomElement displayType=property.firstChildElement("displaytype");
     QDomElement hideEle=property.firstChildElement("hide");
+    QDomElement typeEle=property.firstChildElement("datatype");
     if(hideEle.text()=="YES")
     {
         return;
@@ -589,19 +590,21 @@ void QJDMdi::parsePropertyElement(QDomElement const& property)
     QString widgetType=displayType.attribute("name");
     if(widgetType=="fileread" || widgetType=="filesave")
     {
-//        qDebug()<<"fileread write in as:: "<<property.attribute("name")<<displayType.text();
-//        textStream<<property.attribute("name")<<"="<<displayType.text()<<";";
         propertyNameAndValue=property.attribute("name")+"="+displayType.text();
-//        qDebug()<<propertyNameAndValue;
+
+        propertyNameAndValueList.append(propertyNameAndValue);
+        propertyNameAndValue.clear();
+    }
+    if(widgetType=="filechooseread" || widgetType=="filechoosesave")
+    {
+        propertyNameAndValue=property.attribute("name")+"="+displayType.text()+
+                ";type="+typeEle.text();;
         propertyNameAndValueList.append(propertyNameAndValue);
         propertyNameAndValue.clear();
     }
     if(widgetType=="lineedit" || widgetType=="spinbox")
     {
-//        qDebug()<<"line/spin write in as:: "<<property.attribute("name")<<displayType.text();
-//        textStream<<property.attribute("name")<<"="<<displayType.text()<<";";
         propertyNameAndValue=property.attribute("name")+"="+displayType.text();
-//        qDebug()<<propertyNameAndValue;
 
         propertyNameAndValueList.append(propertyNameAndValue);
         propertyNameAndValue.clear();
@@ -610,20 +613,14 @@ void QJDMdi::parsePropertyElement(QDomElement const& property)
     {
         if(displayType.text()=="checked")
         {
-//            qDebug()<<"check write in as:: "<<property.attribute("name")<<"1";
-//            textStream<<property.attribute("name")<<"="<<"1"<<";";
             propertyNameAndValue=property.attribute("name")+"=1";
-//            qDebug()<<propertyNameAndValue;
 
             propertyNameAndValueList.append(propertyNameAndValue);
             propertyNameAndValue.clear();
         }
         if(displayType.text()=="unchecked")
         {
-//            qDebug()<<"check write in as:: "<<property.attribute("name")<<"0";
-//            textStream<<property.attribute("name")<<"="<<"0"<<";";
             propertyNameAndValue=property.attribute("name")+"=0";
-//            qDebug()<<propertyNameAndValue;
 
             propertyNameAndValueList.append(propertyNameAndValue);
             propertyNameAndValue.clear();

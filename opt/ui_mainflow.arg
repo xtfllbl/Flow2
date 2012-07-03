@@ -1,11 +1,8 @@
 1
 /home/xtf/Project/Flow2/flow
-/home/xtf/Data/2/line1/ccc/log/2::line1::ccc_12620141811452.log
+/home/xtf/Data/1/2/3/log/1::2::3_127311143610.log
 99
-Data Input|infilename=1;
-Data Input|infilename=2bit;
-Data Input|infilename=3bit;
-Data Input|infilename=58bit;
-ReSample|resamplerate=4;
-FirstBreakAutoPick|jdthpath=null;minvelo=1500;maxvel=2000;tw=50;smooth=1;isoutput=1;pickFileName=/home/lub/program/qt/flow/pick2.pick;
-ReSample|resamplerate=4;
+InputFile|infilename=/home/xtf/Data/1/2/Data/Attribute/1 (复件).attr;type=Attribute;
+Mesh|infilename=/home/xtf/Data/1/2/Data/Attribute/1 (第3个复件).attr;type=string;
+OutputFile|outfilename=/home/xtf/Data/1/2/Data/Attribute/mama.sc;type=Attribute;
+Data Input|infilename=/home/lub/data/envrtest/0304-8bit;

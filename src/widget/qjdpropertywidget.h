@@ -24,6 +24,7 @@ private:
     QAction *actDelete;
     QString currentPath;
     QString basePath;
+    QString SAVE_PATH;
     void contextMenuEvent(QContextMenuEvent *);
     void mousePressEvent(QMouseEvent *event);
 private slots:

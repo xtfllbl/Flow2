@@ -244,7 +244,8 @@ void QJDFunArguWidget::creatWidgetItem(QString property, QString desc, QString d
                 fileChooseSave->addComboBoxItem(optionList.at(i));
                 fileChooseSave->setComboBoxCurrentIndex(0);
             }
-            fileChooseSave->setLineText(displayvalue);
+            QFileInfo finfo(displayvalue);
+            fileChooseSave->setLineText(finfo.fileName());
             fileChooseSave->setDataPath(DATA_PATH);
             fileChooseSave->propertyInt=propertyList.size()-1;
 
@@ -340,14 +341,13 @@ void QJDFunArguWidget::finishCreatUI()
 {
     /// 结束前添加spacer
     QHBoxLayout *hLayout=new QHBoxLayout;
-    QJDPushButton *saveButton=new QJDPushButton;
+    QPushButton *saveButton=new QPushButton;
     saveButton->setText("Save");
 //    saveButton->setIcon(QIcon(":/src/images/save.png")); // 图标较突兀
     QPushButton *cancleButton=new QPushButton;
     cancleButton->setText("Cancle");
     connect(saveButton,SIGNAL(clicked()),this,SLOT(saveArgToXml()));
     connect(cancleButton,SIGNAL(clicked()),this,SLOT(close()));
-    connect(this,SIGNAL(sigHighlightSave()),saveButton,SLOT(setHighlight()));
 
     hLayout->addWidget(saveButton);
     hLayout->addWidget(cancleButton);

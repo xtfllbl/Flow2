@@ -5,16 +5,18 @@ QJDPushButton::QJDPushButton(QWidget *parent) :
 {
 }
 
-void QJDPushButton::enterEvent(QEvent *)
+void QJDPushButton::enterEvent(QEvent *e)
 {
 //    qDebug()<<"enterEvent";  //为什么总是foucusin
+    QPushButton::enterEvent(e);
     this->setFlat(false);
 }
 
-void QJDPushButton::leaveEvent ( QEvent * )
+void QJDPushButton::leaveEvent ( QEvent * e)
 {
 //    qDebug()<<"leaveEvent";
 
+    QPushButton::leaveEvent(e);
     this->setFlat(true);
 
 }

@@ -73,10 +73,9 @@ void QJDFileChooseRead::setFileList(QListWidgetItem *item)
 
 void QJDFileChooseRead::emitEditFinished(QListWidgetItem *item)
 {
-//    qDebug()<<"QJDFileChooseRead::emitEditFinished";
-    // 这里需要给绝对路径
+    QString type=DIR_PATH.right(DIR_PATH.count()-DIR_PATH.lastIndexOf("/")-1);
     QString value=DIR_PATH+"/"+item->text();
     QStringList list;
-    list<<PROPERTY<<DESC<<DATATYPE<<DISPLAYTYPE<<value<<OPTION;
+    list<<PROPERTY<<DESC<<type<<DISPLAYTYPE<<value<<OPTION;
     emit sigFileChooseReadEditChanged(propertyInt,list);
 }

@@ -25,6 +25,7 @@ QJDPropertyWidget::QJDPropertyWidget()
 // 缺陷:1.name 只有descname才能显示,否则没有,size目前只有目录有size,文件没有
 void QJDPropertyWidget::setPropertyData(QString path)
 {
+    SAVE_PATH=path;
 //    qDebug()<<"setPropertyData";
     QStandardItemModel *model=new QStandardItemModel();
     //设置大小
@@ -252,7 +253,7 @@ void QJDPropertyWidget::delFile()
          {
              deleteDirectory(f);
          }
-
+         setPropertyData(SAVE_PATH);
          break;
      case QMessageBox::No:
          // Don't delete
