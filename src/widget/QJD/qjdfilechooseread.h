@@ -16,7 +16,7 @@ signals:
     void sigFileChooseReadEditChanged(int, QStringList);
 public slots:
     void setTypeData(QString dataDirPath);
-
+    void setCurrentValue(QString);
 private slots:
     void setFileList(QListWidgetItem*);
     void emitEditFinished(QListWidgetItem*);
@@ -31,8 +31,11 @@ private:
     QString DATA_PATH;
     QString DIR_PATH;
 
+    QString VALUE;
+
     QLabel *typeLabel;
     QLabel *listLabel;
+    QLabel *pathLabel;
 
     QListWidget *leftListWidget;
     QListWidget *rightListWidget;

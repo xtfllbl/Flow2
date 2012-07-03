@@ -869,9 +869,11 @@ void QJDMainWindow::on_actionJob_Viewer_triggered()
 
 void QJDMainWindow::excuteDecide(QMdiSubWindow *w)
 {
+//    qDebug()<<"excuteDecide!!!!!"<<w;
     if(w==0)
     {
         ui->actionExcuteFlow->setEnabled(false);
+//        tabWidget->setCurrentIndex(0);
     }
     else
     {

@@ -31,7 +31,7 @@ bool QJDFunArguWidget::setData(QString name, QString path)
     DATA_PATH=ARGU_FILE_PATH.left(ARGU_FILE_PATH.lastIndexOf("/"));  // 去文件名
     DATA_PATH=DATA_PATH.left(DATA_PATH.lastIndexOf("/"));   //去流程目录
     DATA_PATH=DATA_PATH+"/Data";
-    qDebug()<<"~~~~~~~~~~~~~~~~"<<DATA_PATH;
+//    qDebug()<<"~~~~~~~~~~~~~~~~"<<DATA_PATH;
     // 有了名称和路径,需要解析xml并且显示
     QStringList areaLineFlow=path.split("/",QString::SkipEmptyParts);
 //    qDebug()<<"----------------"<<areaLineFlow;
@@ -225,6 +225,7 @@ void QJDFunArguWidget::creatWidgetItem(QString property, QString desc, QString d
         {
             fileChooseRead->setPropertyList(argList);
             fileChooseRead->propertyInt=propertyList.size()-1;
+            fileChooseRead->setCurrentValue(displayvalue);
             fileChooseRead->setTypeData(DATA_PATH);
 
             connect(fileChooseRead,SIGNAL(sigFileChooseReadEditChanged(int,QStringList)),this,SLOT(changeDisplayValue(int,QStringList)));
@@ -242,7 +243,10 @@ void QJDFunArguWidget::creatWidgetItem(QString property, QString desc, QString d
             for(int i=0;i<optionList.size();i++)
             {
                 fileChooseSave->addComboBoxItem(optionList.at(i));
-                fileChooseSave->setComboBoxCurrentIndex(0);
+                if(datatype==optionList.at(i))
+                {
+                    fileChooseSave->setComboBoxCurrentIndex(i);
+                }
             }
             QFileInfo finfo(displayvalue);
             fileChooseSave->setLineText(finfo.fileName());

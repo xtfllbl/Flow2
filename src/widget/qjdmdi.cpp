@@ -375,18 +375,18 @@ bool QJDMdi::refreshPosFile()
 
 void QJDMdi::excuteFlow(QString flowName)
 {
-    /// 总感觉不能依靠此来判断
-    if(ITEM_PATH_LIST.count()==0)
-    {
-        QMessageBox::information(this,"No flow excuted","Please open a flow before you can excute it.",QMessageBox::Ok);
-        return;
-    }
-
     if(!refreshPosFile())
     {
         QMessageBox::information(this,"No flow excuted","Please open a flow before you can excute it.",QMessageBox::Ok);
         return;
     }
+
+    if(ITEM_PATH_LIST.count()==0)
+    {
+        QMessageBox::information(this,"No flow excuted","Please open a flow that contains funcation before you can excute it.",QMessageBox::Ok);
+        return;
+    }
+
 
 //    qDebug()<<"~~~~~"<<FLOW_PATH<<ITEM_PATH_LIST<<ITEM_STATUS_LIST;
     /// ----------按照顺序解析xml模块,输出至输出文件-------------- ///
