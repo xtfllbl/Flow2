@@ -6,12 +6,22 @@
     <desc>This is a data input module. </desc>
      <type>Data IO</type>
 </module>
+<module name="Input File" group="IO">
+    <path>modules/IO/InputFile.xml</path>
+    <desc>This is a data input module. </desc>
+     <type>Data IO</type>
+</module>
+<module name="Output File" group="IO">
+    <path>modules/IO/OutputFile.xml</path>
+    <desc>This is a data output module. </desc>
+     <type>Data IO</type>
+</module>
 <module name="ReSample" group="Process">
     <path>modules/Process/resample.xml</path>
     <desc>This is a resample module.</desc>
     <type>Data Process</type>
 </module>
-<module name="First Break Auto Pick" group="Process">
+<module name="FirstBreak AutoPick" group="Process">
     <path>modules/Process/FirstBreakAutoPick.xml</path>
     <desc>This is a auto pick module. </desc>
     <type>Data Process</type>
@@ -26,14 +36,14 @@
     <desc>This is a ShotAttributesExtraction module. </desc>
     <type>Data Process</type>
 </module>
-<module name="Pick" group="Process">
-    <path>modules/Process/pick.xml</path>
-    <desc>This is a test module. </desc>
-    <type>Data Process</type>
-</module>
 <module name="Trace Display" group="Display">
     <path>modules/Display/TraceDisplay.xml</path>
     <desc>This is a ShotAttributesExtraction module. </desc>
     <type>Display</type>
+</module>
+<module name="Mesh" group="Display">
+    <path>modules/Display/Mesh.xml</path>
+    <desc>This is a display module. </desc>
+     <type>Display</type>
 </module>
 </index>

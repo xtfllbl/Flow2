@@ -3,6 +3,8 @@
 
 #include <QWidget>
 #include <QTableView>
+#include <QMenu>
+#include <QFileInfo>
 
 class QJDPropertyWidget : public QTableView
 {
@@ -18,8 +20,16 @@ private:
     QString dirSize(const QString &sDirPath);
     QString fileSize(qint64 size);
 
+    QMenu *menu;
+    QAction *actDelete;
+    QString currentPath;
+    QString basePath;
+    void contextMenuEvent(QContextMenuEvent *);
+    void mousePressEvent(QMouseEvent *event);
+private slots:
+    void delFile();
+    void deleteDirectory(QFileInfo fileList);
 
-    
 };
 
 #endif // QJDPROPERTYWIDGET_H

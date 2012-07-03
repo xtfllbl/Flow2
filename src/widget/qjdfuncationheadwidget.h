@@ -13,17 +13,15 @@ public:
     explicit QJDFuncationHeadWidget(QFrame *parent = 0);
     
 signals:
-    void sigExpandClicked();
+    void sigExpandClicked(int);
     void sigCollapseClicked();
 public slots:
 private:
     QLabel *textLabel;
     QJDPushButton *expandButton;
-    QJDPushButton *collapseButton;
     QSpacerItem *horizontalSpacer;
 private slots:
-    void emitSigExpand();
-    void emitSigCollapse();
+    void emitSigExpand(bool);
 };
 
 #endif // QJDFUNCATIONHEADWIDGET_H

@@ -11,7 +11,7 @@ QJDFileSaveLine::QJDFileSaveLine(QWidget *parent) :
     lineEdit=new QLineEdit;
     fileButton=new QToolButton;
     fileButton->setText("...");
-    fileButton->setIcon(QIcon(":/images/filesave.png"));
+    fileButton->setIcon(QIcon(":/src/images/save.png"));
     connect(fileButton,SIGNAL(pressed()),this,SLOT(fileButtonPressed()));
 
     QHBoxLayout *layout=new QHBoxLayout;

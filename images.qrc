@@ -60,5 +60,15 @@
         <file>src/images/gtk-no.png</file>
         <file>src/images/list-remove.png</file>
         <file>src/images/media-playback-start.png</file>
+        <file>src/images/data.png</file>
+        <file>src/images/dir.png</file>
+        <file>src/images/file.png</file>
+        <file>src/images/save.png</file>
+        <file>src/images/normalButton_hover.png</file>
+        <file>src/images/normalButton_default.png</file>
+        <file>src/images/normalButton_disabled.png</file>
+        <file>src/images/normalButton_focus.png</file>
+        <file>src/images/normalButton_pressed.png</file>
+        <file>src/images/normalButton.png</file>
     </qresource>
 </RCC>

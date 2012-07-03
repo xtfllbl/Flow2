@@ -11,6 +11,7 @@
 #include "widget/qjdmdi.h"
 #include "widget/qjdareaheadwidget.h"
 #include "widget/qjdfuncationheadwidget.h"
+#include "qjdargu.h"
 
 namespace Ui {
 class QJDMainWindow;
@@ -24,7 +25,7 @@ public:
     explicit QJDMainWindow(QWidget *parent = 0);
     ~QJDMainWindow();
     
-    bool deleteDir(const QString dirName);
+    void deleteDir(QFileInfo fileList);
 
 private slots:
     void on_actionExit_triggered();
@@ -50,10 +51,12 @@ private slots:
     void excuteFlowSlot();
 
     void on_actionJob_Viewer_triggered();
+    void excuteDecide(QMdiSubWindow*);
 
 private:
     Ui::QJDMainWindow *ui;
     QSettings settings;
+    QJDArgu *argu;
 
     QString _HOME_DIR;
 //    QHash<QString ,QString> stringPath;
@@ -71,12 +74,16 @@ private:
     QJDLabel *pathLabel2;
     QSplitter *splitter;
 
+    bool canCreatNewFlow;
 
 
     void setHomeDir(QString);
     QString getHomeDir();
     void setAreaWidget(QString areaString,QString areaPath,QStringList lineStringList,QStringList linePathList,
-                       QVector<QStringList> flowStringList,QVector<QStringList> flowPathList);
+                       QVector<QStringList> flowStringList,QVector<QStringList> flowPathList,
+                       QVector<QVector<QStringList> > dataStringList,QVector<QVector<QStringList> > dataPathList);
+
+    void closeEvent(QCloseEvent *);
 
 public slots:
     void enableNew(int level);

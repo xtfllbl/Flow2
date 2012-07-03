@@ -17,7 +17,7 @@ QJDFuncationWidget::QJDFuncationWidget()
 void QJDFuncationWidget::analysisIndexXML()
 {
     qDebug()<<" QJDFuncationWidget::analysisIndexXML()";
-    fileXMLIndex.setFileName(argu->exePath+"/fun/index.xml");
+    fileXMLIndex.setFileName(argu->JD_FlowDir+"/fun/index.xml");
     qDebug()<<fileXMLIndex.fileName();
     if(!fileXMLIndex.open(QFile::ReadOnly))
     {
@@ -78,7 +78,7 @@ void QJDFuncationWidget::setWidgetData()
     this->addTopLevelItem(processItem);
     this->addTopLevelItem(displayItem);
 
-    this->expandAll();
+    this->expandToDepth(1);
 }
 
 void QJDFuncationWidget::mouseDoubleClickEvent(QMouseEvent *event)
@@ -86,5 +86,8 @@ void QJDFuncationWidget::mouseDoubleClickEvent(QMouseEvent *event)
     qDebug()<<"QJDFuncationWidget::mouseDoubleClickEvent";
     // 传出名称和路径
     qDebug()<<this->currentItem()->text(0)<<this->currentItem()->toolTip(0);
-    emit sigFunDoubleClicked(currentItem()->text(0),currentItem()->toolTip(0));
+    if(currentItem()->childCount()==0)
+    {
+        emit sigFunDoubleClicked(currentItem()->text(0),currentItem()->toolTip(0));
+    }
 }

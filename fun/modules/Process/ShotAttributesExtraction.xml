@@ -27,15 +27,5 @@
 	<datatype>float</datatype>
 	<displaytype name="lineedit">2000</displaytype>
 </property>
-<property name="isoutput">
-	<desc>isoutput</desc>
-	<datatype>bool</datatype>
-	<displaytype name="checkbox">checked</displaytype>
-</property>
-<property name="attriFilename">
-	<desc>scanFileName</desc>
-	<datatype>string</datatype>
-	<displaytype name="filesave">attr.sa</displaytype>
-</property>
 </module>
 </ui>

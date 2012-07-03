@@ -12,7 +12,7 @@ QJDMdiSubListWidget::QJDMdiSubListWidget(QWidget *parent) :
     setSelectionMode(QAbstractItemView::ExtendedSelection);  // 多选条目
 
     menu=new QMenu;
-    actDelFlow=new QAction("Delete Flow",this);
+    actDelFlow=new QAction("Delete Funcation",this);
     actOpenCloseFlow=new QAction("Open/Close Flow",this);
     menu->addAction(actDelFlow);
     menu->addAction(actOpenCloseFlow);

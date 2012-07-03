@@ -13,7 +13,7 @@
 QJDProcessWidget::QJDProcessWidget(QWidget *parent) :
     QWidget(parent)
 {
-    setWindowTitle("Flow Viewer");
+    setWindowTitle("Job Viewer");
 //    setWindowFlags(Qt::WindowStaysOnTopHint);
     QDesktopWidget* desktop = QApplication::desktop(); // =qApp->desktop();也可以
 //    move((desktop->width() - this->width())/2, (desktop->height() - this->height())/2);
@@ -38,37 +38,37 @@ QJDProcessWidget::QJDProcessWidget(QWidget *parent) :
 
     // Menu "Action"
     QMenu *actionMenu=new QMenu("Action");
-    QAction *actContinue=new QAction(this);
-    actContinue->setText("Continue");
-    actContinue->setIcon(QIcon(":/src/images/excute.png"));
+//    QAction *actContinue=new QAction(this);
+//    actContinue->setText("Continue");
+//    actContinue->setIcon(QIcon(":/src/images/excute.png"));
 
-    QAction *actStop=new QAction(this);
-    actStop->setText("Stop");
-    actStop->setIcon(QIcon(":/src/images/norun.png"));
+//    QAction *actStop=new QAction(this);
+//    actStop->setText("Stop");
+//    actStop->setIcon(QIcon(":/src/images/norun.png"));
 
-    QAction *actPause=new QAction(this);
-    actPause->setText("Pause");
-    actPause->setIcon(QIcon(":/src/images/media-playback-stop.png"));
+//    QAction *actPause=new QAction(this);
+//    actPause->setText("Pause");
+//    actPause->setIcon(QIcon(":/src/images/media-playback-stop.png"));
 
-    QAction *actKill=new QAction(this);
-    actKill->setText("Kill");
-    actKill->setIcon(QIcon(":/src/images/gtk-no.png"));
+//    QAction *actKill=new QAction(this);
+//    actKill->setText("Kill");
+//    actKill->setIcon(QIcon(":/src/images/gtk-no.png"));
 
     QAction *actTer=new QAction(this);
     actTer->setText("Terminate");
     actTer->setIcon(QIcon(":/src/images/process-stop.png"));
 
-    actionMenu->addAction(actContinue);
-    actionMenu->addAction(actStop);
-    actionMenu->addAction(actPause);
-    actionMenu->addAction(actKill);
+//    actionMenu->addAction(actContinue);
+//    actionMenu->addAction(actStop);
+//    actionMenu->addAction(actPause);
+//    actionMenu->addAction(actKill);
     actionMenu->addAction(actTer);
 
     menuBar->addMenu(actionMenu);
-    connect(actContinue,SIGNAL(triggered()),tableWidget,SLOT(conProcess()));
-    connect(actStop,SIGNAL(triggered()),tableWidget,SLOT(stopProcess()));
-    connect(actPause,SIGNAL(triggered()),tableWidget,SLOT(hanProcess()));
-    connect(actKill,SIGNAL(triggered()),tableWidget,SLOT(killProcess()));
+//    connect(actContinue,SIGNAL(triggered()),tableWidget,SLOT(conProcess()));
+//    connect(actStop,SIGNAL(triggered()),tableWidget,SLOT(stopProcess()));
+//    connect(actPause,SIGNAL(triggered()),tableWidget,SLOT(hanProcess()));
+//    connect(actKill,SIGNAL(triggered()),tableWidget,SLOT(killProcess()));
     connect(actTer,SIGNAL(triggered()),tableWidget,SLOT(terProcess()));
 
     tableWidget->setSortingEnabled(false);
@@ -200,36 +200,36 @@ QJDProcessTableWidget::QJDProcessTableWidget(QWidget *parent) :
     menu->addAction(actDelLog);
     connect(actDelLog,SIGNAL(triggered()),this,SLOT(delSlot()));
 
-    actContinue=new QAction(this);
-    actContinue->setText("Continue");
-    actContinue->setIcon(QIcon(":/src/images/excute.png"));
+//    actContinue=new QAction(this);
+//    actContinue->setText("Continue");
+//    actContinue->setIcon(QIcon(":/src/images/excute.png"));
 
-    actStop=new QAction(this);
-    actStop->setText("Stop");
-    actStop->setIcon(QIcon(":/src/images/norun.png"));
+//    actStop=new QAction(this);
+//    actStop->setText("Stop");
+//    actStop->setIcon(QIcon(":/src/images/norun.png"));
 
-    actPause=new QAction(this);
-    actPause->setText("Pause");
-    actPause->setIcon(QIcon(":/src/images/media-playback-stop.png"));
+//    actPause=new QAction(this);
+//    actPause->setText("Pause");
+//    actPause->setIcon(QIcon(":/src/images/media-playback-stop.png"));
 
-    actKill=new QAction(this);
-    actKill->setText("Kill");
-    actKill->setIcon(QIcon(":/src/images/gtk-no.png"));
+//    actKill=new QAction(this);
+//    actKill->setText("Kill");
+//    actKill->setIcon(QIcon(":/src/images/gtk-no.png"));
 
     actTer=new QAction(this);
     actTer->setText("Terminate");
     actTer->setIcon(QIcon(":/src/images/process-stop.png"));
 
-    menu->addAction(actContinue);
-    menu->addAction(actStop);
-    menu->addAction(actPause);
-    menu->addAction(actKill);
+//    menu->addAction(actContinue);
+//    menu->addAction(actStop);
+//    menu->addAction(actPause);
+//    menu->addAction(actKill);
     menu->addAction(actTer);
 
-    connect(actContinue,SIGNAL(triggered()),this,SLOT(conProcess()));
-    connect(actStop,SIGNAL(triggered()),this,SLOT(stopProcess()));
-    connect(actPause,SIGNAL(triggered()),this,SLOT(hanProcess()));
-    connect(actKill,SIGNAL(triggered()),this,SLOT(killProcess()));
+//    connect(actContinue,SIGNAL(triggered()),this,SLOT(conProcess()));
+//    connect(actStop,SIGNAL(triggered()),this,SLOT(stopProcess()));
+//    connect(actPause,SIGNAL(triggered()),this,SLOT(hanProcess()));
+//    connect(actKill,SIGNAL(triggered()),this,SLOT(killProcess()));
     connect(actTer,SIGNAL(triggered()),this,SLOT(terProcess()));
 }
 
@@ -379,10 +379,13 @@ void QJDProcessTableWidget::clearHistorySlot()
     {
     case QMessageBox::Ok:
         qDebug()<<"start remove"<<rowCount();
-        for(int i=rowCount()-1;i>=0;i--)
-        {
-            this->removeRow(i);
-        }
+//        for(int i=rowCount()-1;i>=0;i--)
+//        for(int i=0;i<rowCount()-1;i++)
+//        {
+//            this->removeRow(0);
+//        }
+        this->setRowCount(0);
+        this->setRowCount(1);
         this->saveHistory();
         break;
     case QMessageBox::Cancel:
@@ -393,29 +396,29 @@ void QJDProcessTableWidget::clearHistorySlot()
 
 }
 
-void QJDProcessTableWidget::killProcess()
-{
-    send_to_selected(SIGKILL);
-}
+//void QJDProcessTableWidget::killProcess()
+//{
+//    send_to_selected(SIGKILL);
+//}
 
 void QJDProcessTableWidget::terProcess()
 {
     send_to_selected(SIGTERM);
 }
 
-/// 虽说是暂停,但一般就关闭了
-void QJDProcessTableWidget::hanProcess()
-{
-    send_to_selected(SIGHUP);
-}
-void QJDProcessTableWidget::stopProcess()
-{
-    send_to_selected(SIGSTOP);
-}
-void QJDProcessTableWidget::conProcess()
-{
-    send_to_selected(SIGCONT);
-}
+///// 虽说是暂停,但一般就关闭了
+//void QJDProcessTableWidget::hanProcess()
+//{
+//    send_to_selected(SIGHUP);
+//}
+//void QJDProcessTableWidget::stopProcess()
+//{
+//    send_to_selected(SIGSTOP);
+//}
+//void QJDProcessTableWidget::conProcess()
+//{
+//    send_to_selected(SIGCONT);
+//}
 
 // 需要当前的pid,还需要能多选处理...
 void QJDProcessTableWidget::send_to_selected(int sig)

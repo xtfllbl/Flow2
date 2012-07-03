@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT += core gui
 QT += xml
 
 TARGET = flow
@@ -44,7 +44,9 @@ SOURCES += main.cpp\
     src/widget/qjdprocesswidget.cpp \
     src/qjdprocess.cpp \
     src/qjdtextbrowser.cpp \
-    src/qjdhighlighter.cpp
+    src/qjdhighlighter.cpp \
+    src/widget/QJD/qjdfilechooseread.cpp \
+    src/widget/QJD/qjdfilechoosesave.cpp
 
 HEADERS  += src/qjdmainwindow.h \
     src/widget/qjdmdi.h \
@@ -74,7 +76,9 @@ HEADERS  += src/qjdmainwindow.h \
     src/widget/qjdprocesswidget.h \
     src/qjdprocess.h \
     src/qjdtextbrowser.h \
-    src/qjdhighlighter.h
+    src/qjdhighlighter.h \
+    src/widget/QJD/qjdfilechooseread.h \
+    src/widget/QJD/qjdfilechoosesave.h
 
 FORMS    += src/qjdmainwindow.ui \
     src/qjdtextbrowser.ui

@@ -12,11 +12,10 @@ public:
     explicit QJDFunArguWidget(QWidget *parent = 0);
     
 signals:
-    
+    void sigHighlightSave();
 public slots:
     bool setData(QString name,QString path);
     void saveArgToXml();
-
 private:
 
     QDomDocument domDocument;
@@ -31,6 +30,7 @@ private:
     QString optionstring;
 
     QString ARGU_FILE_PATH;
+    QString DATA_PATH;
 
     QVBoxLayout *finalLayout;
     QDomDocument doc;

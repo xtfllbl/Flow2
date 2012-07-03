@@ -1,6 +1,9 @@
 #include "qjdfunarguwidget.h"
 #include <QDebug>
 #include <QFile>
+#include "QJD/qjdpushbutton.h"
+#include "QJD/qjdfilechooseread.h"
+#include "QJD/qjdfilechoosesave.h"
 #include "QJD/qjdlineedit.h"
 #include "QJD/qjdcombobox.h"
 #include "QJD/qjdfilereadline.h"
@@ -25,6 +28,10 @@ bool QJDFunArguWidget::setData(QString name, QString path)
 {
     qDebug()<<name<<path;
     ARGU_FILE_PATH=path;
+    DATA_PATH=ARGU_FILE_PATH.left(ARGU_FILE_PATH.lastIndexOf("/"));  // 去文件名
+    DATA_PATH=DATA_PATH.left(DATA_PATH.lastIndexOf("/"));   //去流程目录
+    DATA_PATH=DATA_PATH+"/Data";
+    qDebug()<<"~~~~~~~~~~~~~~~~"<<DATA_PATH;
     // 有了名称和路径,需要解析xml并且显示
     QStringList areaLineFlow=path.split("/",QString::SkipEmptyParts);
 //    qDebug()<<"----------------"<<areaLineFlow;
@@ -151,16 +158,21 @@ void QJDFunArguWidget::creatWidgetItem(QString property, QString desc, QString d
     // self edit
     QJDFileReadLine *fileRead=new QJDFileReadLine;
     QJDFileSaveLine *fileSave=new QJDFileSaveLine;
+    QJDFileChooseRead *fileChooseRead=new QJDFileChooseRead;
+    QJDFileChooseSave *fileChooseSave=new QJDFileChooseSave;
 
 //    QList<QString> radioIDList;
 
     if(!property.isEmpty())   // 名称，作为label
     {
-        proLabel->setText(property);
-        proLabel->setFixedWidth(150); // 现在可以有一个较大的弹出窗口
-        proLabel->setFrameShape(QFrame::Panel);
-        proLabel->setFrameShadow(QFrame::Raised);
-        normalLayout->addWidget(proLabel);
+        if(displaytype!="fileChooseRead")
+        {
+            proLabel->setText(property);
+            proLabel->setFixedWidth(150); // 现在可以有一个较大的弹出窗口
+            proLabel->setFrameShape(QFrame::Panel);
+            proLabel->setFrameShadow(QFrame::Raised);
+            normalLayout->addWidget(proLabel);
+        }
     }
     if(!desc.isEmpty())  //描述，tooltip
     {
@@ -208,6 +220,38 @@ void QJDFunArguWidget::creatWidgetItem(QString property, QString desc, QString d
             normalLayout->addWidget(fileSave);
         }
 
+        /// ------------------------------------fileChooseRead-------------------------------//
+        if(displaytype=="filechooseread")
+        {
+            fileChooseRead->setPropertyList(argList);
+            fileChooseRead->propertyInt=propertyList.size()-1;
+            fileChooseRead->setTypeData(DATA_PATH);
+
+            connect(fileChooseRead,SIGNAL(sigFileChooseReadEditChanged(int,QStringList)),this,SLOT(changeDisplayValue(int,QStringList)));
+            normalLayout->addWidget(fileChooseRead);
+        }
+
+        /// ------------------------------------fileChooseSave-------------------------------//
+        if(displaytype=="filechoosesave")
+        {
+            QStringList optionList;
+            optionList=optionstring.split(";",QString::SkipEmptyParts);
+
+            fileChooseSave->setPropertyList(argList);
+//            fileChooseSave->setMinimumWidth(200);
+            for(int i=0;i<optionList.size();i++)
+            {
+                fileChooseSave->addComboBoxItem(optionList.at(i));
+                fileChooseSave->setComboBoxCurrentIndex(0);
+            }
+            fileChooseSave->setLineText(displayvalue);
+            fileChooseSave->setDataPath(DATA_PATH);
+            fileChooseSave->propertyInt=propertyList.size()-1;
+
+            connect(fileChooseSave,SIGNAL(sigFileChooseSaveEditChanged(int,QStringList)),
+                    this,SLOT(changeDisplayValue(int,QStringList)));
+            normalLayout->addWidget(fileChooseSave);
+        }
         /// ------------------------------------checkBox-------------------------------//
         if(displaytype=="checkbox")
         {
@@ -296,12 +340,14 @@ void QJDFunArguWidget::finishCreatUI()
 {
     /// 结束前添加spacer
     QHBoxLayout *hLayout=new QHBoxLayout;
-    QPushButton *saveButton=new QPushButton;
+    QJDPushButton *saveButton=new QJDPushButton;
     saveButton->setText("Save");
+//    saveButton->setIcon(QIcon(":/src/images/save.png")); // 图标较突兀
     QPushButton *cancleButton=new QPushButton;
     cancleButton->setText("Cancle");
-    connect(saveButton,SIGNAL(pressed()),this,SLOT(saveArgToXml()));
-    connect(cancleButton,SIGNAL(pressed()),this,SLOT(close()));
+    connect(saveButton,SIGNAL(clicked()),this,SLOT(saveArgToXml()));
+    connect(cancleButton,SIGNAL(clicked()),this,SLOT(close()));
+    connect(this,SIGNAL(sigHighlightSave()),saveButton,SLOT(setHighlight()));
 
     hLayout->addWidget(saveButton);
     hLayout->addWidget(cancleButton);
@@ -317,6 +363,7 @@ void QJDFunArguWidget::changeDisplayValue(int propertyListInt ,QStringList chang
     qDebug()<<"changeDisplayValue::"<<propertyList.at(propertyListInt)<<changeList;
     propertyList.replace(propertyListInt,changeList);
 //    qDebug()<<propertyList;
+    emit sigHighlightSave();
 }
 
 void QJDFunArguWidget::saveArgToXml()

@@ -12,7 +12,7 @@
 	<datatype>int</datatype>
 	<displaytype name="spinbox">1500</displaytype>
 </property>
-<property name="maxvel">
+<property name="maxvelo">
 	<desc>maxvel</desc>
 	<datatype>int</datatype>
 	<displaytype name="spinbox">2000</displaytype>
@@ -26,16 +26,6 @@
 	<desc>smooth</desc>
 	<datatype>bool</datatype>
 	<displaytype name="checkbox">checked</displaytype>
-</property>
-<property name="isoutput">
-	<desc>isoutput</desc>
-	<datatype>bool</datatype>
-	<displaytype name="checkbox">checked</displaytype>
-</property>
-<property name="pickFileName">
-	<desc>pickFileName</desc>
-	<datatype>string</datatype>
-	<displaytype name="filesave">/home/lub/program/qt/flow/pick2.pick</displaytype>
 </property>
 </module>
 </ui>

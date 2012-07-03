@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE ui>
+<ui version="1.0">
+<module name="InputFile" version="1.0">
+<property name="infilename">
+	<desc>data in file name</desc>
+	<datatype>string</datatype>
+	<displaytype name="filechooseread">1.pick</displaytype>
+</property>
+</module>
+</ui>
+

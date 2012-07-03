@@ -14,6 +14,7 @@ public:
 //    bool isArea;
 //    bool isLine;
 //    bool isFlow;
+    QString returnPathStr;
 
     void setLevel(int level);
     int level();

@@ -16,16 +16,16 @@ QJDAreaHeadWidget::QJDAreaHeadWidget(QFrame *parent) :
     refreshButton->setFlat(true);
     refreshButton->setIconSize(QSize(32,32));
     expandButton=new QJDPushButton;
-    expandButton->setToolTip("Expand All");
+    expandButton->setToolTip("Expand/Collapse");
     expandButton->setIcon(QIcon(":/src/images/expand.png"));
     expandButton->setFlat(true);
     expandButton->setIconSize(QSize(32,32));
-    collapseButton=new QJDPushButton;
-    collapseButton->setToolTip("Collapse All");
-    collapseButton->setIcon(QIcon(":/src/images/collapse.png"));
-    collapseButton->setFlat(true);
-    collapseButton->setIconSize(QSize(32,32));
-
+    QIcon exIcon;
+    exIcon.addFile(QString::fromUtf8(":/src/images/expand.png"), QSize(), QIcon::Normal, QIcon::Off);
+    exIcon.addFile(QString::fromUtf8(":/src/images/collapse.png"), QSize(), QIcon::Normal, QIcon::On);
+    expandButton->setIcon(exIcon);
+    expandButton->setCheckable(true);
+    expandButton->setChecked(true);
 
     QPushButton *pixButton=new QPushButton;
     pixButton->setMinimumSize(32,32);
@@ -42,15 +42,13 @@ QJDAreaHeadWidget::QJDAreaHeadWidget(QFrame *parent) :
     layout->addItem(horizontalSpacer);
     layout->addWidget(refreshButton);
     layout->addWidget(expandButton);
-    layout->addWidget(collapseButton);
 
     this->setLayout(layout);
     this->setFrameShape(QFrame::StyledPanel);
     this->setFrameShadow(QFrame::Plain);
 
     connect(refreshButton,SIGNAL(pressed()),this,SLOT(emitSigRefresh()));
-    connect(expandButton,SIGNAL(pressed()),this,SLOT(emitSigExpand()));
-    connect(collapseButton,SIGNAL(pressed()),this,SLOT(emitSigCollapse()));
+    connect(expandButton,SIGNAL(clicked(bool)),this,SLOT(emitSigExpand(bool)));
 }
 
 void QJDAreaHeadWidget::emitSigRefresh()
@@ -58,12 +56,15 @@ void QJDAreaHeadWidget::emitSigRefresh()
     emit sigRefreshClicked();
 }
 
-void QJDAreaHeadWidget::emitSigExpand()
+void QJDAreaHeadWidget::emitSigExpand(bool checked)
 {
-    emit sigExpandClicked();
+    if(checked==true)
+    {
+        emit sigExpandClicked(1);
+    }
+    if(checked==false)
+    {
+        emit sigCollapseClicked();
+    }
 }
 
-void QJDAreaHeadWidget::emitSigCollapse()
-{
-    emit sigCollapseClicked();
-}

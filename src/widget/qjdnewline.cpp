@@ -1,5 +1,6 @@
 #include "qjdnewline.h"
 #include <QLayout>
+#include <QDebug>
 QJDNewLine::QJDNewLine(QWidget *parent) :
     QDialog(parent)
 {

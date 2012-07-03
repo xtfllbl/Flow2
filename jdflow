@@ -1,0 +1,4 @@
+export JDFLOWDATA=~/Data	#数据目录
+export JDFLOWDIR=~/Project/Flow2	#程序可执行目录
+export FILETYPE=Pick,Scan,Attribute  #可添加新文件类型
+$JDFLOWDIR/flow

@@ -51,7 +51,7 @@ void QJDNewFlow::setFlowName()
 {
     flowName=lineEdit->text();
 
-    if(flowName!="")
+    if(flowName!="" && flowName!="Data" && flowName!="data")
     {
         emit sigFlowName(flowName);
         accept();

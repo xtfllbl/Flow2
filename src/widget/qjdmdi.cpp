@@ -99,7 +99,9 @@ void QJDMdi::showExistSubWindow(QString flowName, QString flowPath)
 //               <<hashSubMdiName.value(subWindowList().at(i))<<listWidget->windowTitle();
         if(hashSubMdiName.value(subWindowList().at(i))==listWidget->windowTitle() )
         {
-            QMessageBox::warning(this,"Warning","Please do not open the same flow again!");
+            /// 可以设置焦点,不要弹出对话框
+//            QMessageBox::warning(this,"Warning","Please do not open the same flow again!");
+            this->setActiveSubWindow(hashSubMdiName.key(listWidget->windowTitle()));
             return;
         }
     }
@@ -177,14 +179,14 @@ void QJDMdi::showExistSubWindow(QString flowName, QString flowPath)
 }
 
 
-void QJDMdi::addFlow(QString name, QString xmlPath)
+void QJDMdi::addFuncation(QString name, QString xmlPath)
 {
     //    1. 传输名字
     //    2. 复制xml 文件到本flow文件中去!单独文件,无需在意位置,原始文件直接复制
     //    3. 位置的串联由顺序决定
     //    4. 已有的flow则是扫描顺序文件?顺序文件采取何种方式
     // -----------------------------------------------------------------------------------------------------//
-    qDebug()<<"QJDMdi::addFlow"<<name<<xmlPath;
+    qDebug()<<"QJDMdi::addFuncation"<<name<<xmlPath;
     /// 在当前的mdi窗口中,添加一行,需要找到那个listwidget,QHASH(sub,list),great idea
     if(currentSubWindow()==0)
     {
@@ -195,7 +197,7 @@ void QJDMdi::addFlow(QString name, QString xmlPath)
 
     /// 复制文件到当前flow
     // from listwidgetitem tootip To subwindow tooltip
-    QString copyFromFile="fun/"+xmlPath;
+    QString copyFromFile=QApplication::applicationDirPath()+"/fun/"+xmlPath;
     QString copyToFile=subWindow->toolTip(); // +文件名
     QString xmlFileName=xmlPath.right( xmlPath.size()-xmlPath.lastIndexOf("/") -1);
     copyToFile=copyToFile+"/"+xmlFileName;  /// !!!!如何保证不重???
@@ -228,19 +230,10 @@ void QJDMdi::addFlow(QString name, QString xmlPath)
     listWidgetItem->setIcon(QIcon(":/src/images/run.png"));
     /// 插入到当前的后者会比较好
 //    listWidget->addItem(listWidgetItem);
+    /// 是否要添加insert before/insert after,那就需要多一个变量
     listWidget->insertItem(listWidget->currentRow()+1,listWidgetItem);
 
     listWidget->setCurrentRow(listWidget->currentRow()+1);
-
-//    /// 中键显示参数窗口
-//    connect(listWidget,SIGNAL(sigMidButtonClicked(QListWidgetItem*)),
-//            this,SLOT(listWidgetItemMidClicked(QListWidgetItem*)));
-//    /// 右键显示功能菜单
-//    connect(listWidget,SIGNAL(sigDelFlowClicked(QList<QListWidgetItem *>)),
-//             this,SLOT(delFlow(QList<QListWidgetItem *>)));
-//    connect(listWidget,SIGNAL(sigOpenCloseFlowClicked(QList<QListWidgetItem *>)),
-//             this,SLOT(openCloseFlow(QList<QListWidgetItem *>)));
-
 
     refreshPosFile();
 }
@@ -284,14 +277,13 @@ void QJDMdi::openCloseFlow(QList<QListWidgetItem *> itemList)
         if(item->statusTip()=="0")
         {
             item->setStatusTip("1");
-            item->setBackgroundColor(QColor(255,255,255));
+            item->setTextColor(QColor(0,0,0));
             item->setIcon(QIcon(":/src/images/run.png"));
 
         }
         else
         {
             item->setStatusTip("0");
-//            item->setBackgroundColor(QColor(188,188,188));
             item->setTextColor(QColor(200,200,200));
             item->setIcon(QIcon(":/src/images/norun.png"));
         }
@@ -313,7 +305,7 @@ QString QJDMdi::checkFileIfExist(QString fileName)
 
 bool QJDMdi::refreshPosFile()
 {
-//    qDebug()<<"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!refreshPosFile!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
+//    qDebug()<<"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!refreshPosFile!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
     FLOW_PATH.clear();
     ITEM_PATH_LIST.clear();
     ITEM_STATUS_LIST.clear();
@@ -724,8 +716,7 @@ void QJDMdi::showFunArgu(QString name,QString path)
     QMdiSubWindow *subWindow=currentSubWindow();
     QString flowPath=subWindow->toolTip();
     QString abPath=flowPath+"/"+path;
-    qDebug()<<abPath;
-//    funWidget->setData(name,abPath);
+    qDebug()<<"abPath::"<<abPath;
     if(funWidget->setData(name,abPath)==false)
     {
         // 关闭当前的subWindow
@@ -742,12 +733,11 @@ void QJDMdi::showFunArgu(QString name,QString path)
 
 void QJDMdi::listWidgetItemMidClicked(QListWidgetItem *item)
 {
-    // 这个不错,万能
     qDebug()<<"listWidgetItemMidClicked::"<<item->text()<<item->toolTip();
     listWidgetItemName=item->text();
     listWidgetItemTooltip=item->toolTip();
 
-    showFunArgu(listWidgetItemName,listWidgetItemTooltip);
+    showFunArgu(listWidgetItemName,listWidgetItemTooltip);  // 不包括路径....需要包括路径
 }
 
 void QJDMdi::showProcessWidget()

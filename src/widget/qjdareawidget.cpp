@@ -114,7 +114,10 @@ void QJDAreaWidget::actExcuteFlowClicked()
 // 右键菜单执行
 void QJDAreaWidget::contextMenuEvent(QContextMenuEvent *)
 {
-    returnPath(currentItem(),currentColumn());
+    if(this->currentItem()!=0)
+    {
+        returnPath(currentItem(),currentColumn());
+    }
     /// 需要做完判断再显示
     if(menu)
     {
@@ -128,12 +131,12 @@ void QJDAreaWidget::mousePressEvent(QMouseEvent *event)
     qDebug()<<"mousePressEvent"<<event->button();
     if(event->button()==Qt::LeftButton)
     {
-        qDebug()<<"left button clicked";
+//        qDebug()<<"left button clicked";
 //        QTest::mouseClick(this,Qt::RightButton); //引入这个相当麻烦,不应当写入代码
     }
     if(event->button()==Qt::RightButton)
     {
-        qDebug()<<"right button clicked";
+//        qDebug()<<"right button clicked";
 //        QTest::mouseClick(this,Qt::RightButton); //引入这个相当麻烦,不应当写入代码
     }
 }
@@ -141,7 +144,7 @@ void QJDAreaWidget::mousePressEvent(QMouseEvent *event)
 /// 双击判断,判断是flow之后,如无创建过则创建新的sub mdi,
 void QJDAreaWidget::mouseDoubleClickEvent(QMouseEvent *event)
 {
-    qDebug()<<"QJDAreaWidget::mouseDoubleClickEvent"<<event;
+//    qDebug()<<"QJDAreaWidget::mouseDoubleClickEvent"<<event;
     // 必须为双击flow才做反映
     if(level()==3)
     {
@@ -152,6 +155,7 @@ void QJDAreaWidget::mouseDoubleClickEvent(QMouseEvent *event)
 void QJDAreaWidget::returnPath(QTreeWidgetItem* item,int col)
 {
     QString path=item->toolTip(0);
+    returnPathStr=path;
     qDebug()<<"item Clicked --> returnPath"<<path;
     emit sigItemPath(path);
 
@@ -161,14 +165,17 @@ void QJDAreaWidget::returnPath(QTreeWidgetItem* item,int col)
     absolutePath=item->toolTip(col);
     QString left;
     left=absolutePath.right(absolutePath.count()-homeDirPath.count()+1);
-    qDebug()<<absolutePath
-           <<homeDirPath
-          <<left;
+//    qDebug()<<absolutePath<<homeDirPath<<left;
 
     // flow
     if(left.count(QRegExp("/"))==3)
     {
-        setLevel(3);
+        if(left.contains("Data"))
+        {
+            setLevel(4);
+        }
+        else
+            setLevel(3);
     }
     // line
     if(left.count(QRegExp("/"))==2)
@@ -250,6 +257,25 @@ void QJDAreaWidget::setContextMenu(int lev)
 
         actOpenFlow->setVisible(true);
         actExcuteFlow->setVisible(true);
+    }
+    if(lev==4)
+    {
+        actNewArea->setEnabled(false);
+        actNewLine->setEnabled(false);
+        actNewFlow->setEnabled(false);
+        actNewArea->setVisible(false);
+        actNewLine->setVisible(false);
+        actNewFlow->setVisible(false);
+
+        actDelArea->setEnabled(false);
+        actDelLine->setEnabled(false);
+        actDelFlow->setEnabled(false);
+        actDelArea->setVisible(false);
+        actDelLine->setVisible(false);
+        actDelFlow->setVisible(false);
+
+        actOpenFlow->setVisible(false);
+        actExcuteFlow->setVisible(false);
     }
 }
 

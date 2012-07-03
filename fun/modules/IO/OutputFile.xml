@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE ui>
+<ui version="1.0">
+<module name="OutputFile" version="1.0">
+<property name="outfilename">
+	<desc>data in file name</desc>
+	<datatype>string</datatype>
+	<displaytype name="filechoosesave" option="Pick;Scan;Attribute">1.pick</displaytype>
+</property>
+</module>
+</ui>
+
+

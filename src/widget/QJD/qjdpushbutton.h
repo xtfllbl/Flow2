@@ -12,6 +12,7 @@ public:
 signals:
     
 public slots:
+    void setHighlight();
 private:
     void enterEvent(QEvent *);
     void leaveEvent ( QEvent * ) ;

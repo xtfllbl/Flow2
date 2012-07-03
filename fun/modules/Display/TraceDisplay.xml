@@ -7,10 +7,5 @@
 	<datatype>string</datatype>
 	<displaytype name="lineedit">null</displaytype>
 </property>
-<property name="type">
-	<desc>type</desc>
-	<datatype>string</datatype>
-	<displaytype name="type">input</displaytype>
-</property>
 </module>
 </ui>

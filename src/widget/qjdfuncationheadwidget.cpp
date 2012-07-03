@@ -11,15 +11,16 @@ QJDFuncationHeadWidget::QJDFuncationHeadWidget(QFrame *parent) :
 //    textLabel->setPixmap();
     horizontalSpacer = new QSpacerItem(400, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
     expandButton=new QJDPushButton;
-    expandButton->setToolTip("Expand All");
+    expandButton->setToolTip("Expand/Collapse");
     expandButton->setFlat(true);
     expandButton->setIcon(QIcon(":/src/images/expand.png"));
     expandButton->setIconSize(QSize(32,32));
-    collapseButton=new QJDPushButton;
-    collapseButton->setToolTip("Collapse All");
-    collapseButton->setFlat(true);
-    collapseButton->setIcon(QIcon(":/src/images/collapse.png"));
-    collapseButton->setIconSize(QSize(32,32));
+    QIcon exIcon;
+    exIcon.addFile(QString::fromUtf8(":/src/images/expand.png"), QSize(), QIcon::Normal, QIcon::Off);
+    exIcon.addFile(QString::fromUtf8(":/src/images/collapse.png"), QSize(), QIcon::Normal, QIcon::On);
+    expandButton->setIcon(exIcon);
+    expandButton->setCheckable(true);
+    expandButton->setChecked(true);
 
     QPushButton *pixButton=new QPushButton;
     pixButton->setMinimumSize(32,32);
@@ -35,22 +36,24 @@ QJDFuncationHeadWidget::QJDFuncationHeadWidget(QFrame *parent) :
     layout->addWidget(textLabel);
     layout->addItem(horizontalSpacer);
     layout->addWidget(expandButton);
-    layout->addWidget(collapseButton);
 
     this->setLayout(layout);
     this->setFrameShape(QFrame::StyledPanel);
     this->setFrameShadow(QFrame::Plain);
 
-    connect(expandButton,SIGNAL(pressed()),this,SLOT(emitSigExpand()));
-    connect(collapseButton,SIGNAL(pressed()),this,SLOT(emitSigCollapse()));
+    connect(expandButton,SIGNAL(clicked(bool)),this,SLOT(emitSigExpand(bool)));
+
 }
 
-void QJDFuncationHeadWidget::emitSigExpand()
+void QJDFuncationHeadWidget::emitSigExpand(bool checked)
 {
-    emit sigExpandClicked();
+    if(checked==true)
+    {
+        emit sigExpandClicked(1);
+    }
+    if(checked==false)
+    {
+        emit sigCollapseClicked();
+    }
 }
 
-void QJDFuncationHeadWidget::emitSigCollapse()
-{
-    emit sigCollapseClicked();
-}

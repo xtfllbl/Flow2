@@ -12,7 +12,7 @@ QJDFileReadLine::QJDFileReadLine(QWidget *parent) :
     lineEdit=new QLineEdit;
     fileButton=new QToolButton;
     fileButton->setText("...");
-    fileButton->setIcon(QIcon(":/images/filesave.png"));
+    fileButton->setIcon(QIcon(":/src/images/dir.png"));
     connect(fileButton,SIGNAL(pressed()),this,SLOT(fileButtonPressed()));
 
     fileButton->setMaximumHeight(lineEdit->height());

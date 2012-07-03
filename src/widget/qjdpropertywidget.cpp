@@ -5,30 +5,41 @@
 #include <QFileInfo>
 #include <QDateTime>
 #include <QDir>
+#include <QMessageBox>
 
 QJDPropertyWidget::QJDPropertyWidget()
 {
     this->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+    this->setContextMenuPolicy(Qt::DefaultContextMenu);
+    setSelectionMode(QAbstractItemView::SingleSelection);  // 多选条目
+    setSelectionBehavior(QAbstractItemView::SelectRows);
+
+    menu=new QMenu;
+    actDelete=new QAction("Delete File",this);
+    menu->addAction(actDelete);
+    connect(actDelete,SIGNAL(triggered()),this,SLOT(delFile()));
 }
 
 /// 列出给定路径下一层的文件或文件夹相关信息
 // 缺陷:1.name 只有descname才能显示,否则没有,size目前只有目录有size,文件没有
 void QJDPropertyWidget::setPropertyData(QString path)
 {
-    qDebug()<<"setPropertyData";
+//    qDebug()<<"setPropertyData";
     QStandardItemModel *model=new QStandardItemModel();
     //设置大小
-    model->setColumnCount(5);    //列
+    model->setColumnCount(6);    //列
     model->setRowCount(2);    //行
 
     //设置标题
     QStringList a;
 //    a<<"DescName"<<"Owner"<<"Modified"<<"Size"<<"File";
-    a<<"File"<<"DescName"<<"Owner"<<"Modified"<<"Size";
+    a<<"File"<<"Type"<<"DescName"<<"Owner"<<"Modified"<<"Size";
     model->setHorizontalHeaderLabels(a);
 
     QDir dir1;
     dir1.setPath(path);  // 这个需要能设置,程序需要有settings.ini
+    basePath=path;
     QStringList dirLev1;
     dirLev1<<dir1.entryList(QDir::NoDotAndDotDot|QDir::Dirs|QDir::Files);
 
@@ -49,26 +60,31 @@ void QJDPropertyWidget::setPropertyData(QString path)
 //        qDebug()<<areatmp;
         file2.close();
 
+        QStandardItem *itemType = new QStandardItem();
         QStandardItem *itemDesc = new QStandardItem(areatmp);
         QStandardItem *itemOwner = new QStandardItem(fileInfo->owner());
         QStandardItem *itemModify = new QStandardItem(fileInfo->lastModified().toString("yyyy-MM-dd h:mm:ss"));
         QFileInfo info(dir1.path()+"/"+dirLev1.at(i));
         QStandardItem *itemSize;
+        QStandardItem *itemFileName = new QStandardItem(fileInfo->fileName());
         if(info.isDir()) // 是目录
         {
             itemSize = new QStandardItem(dirSize(dir1.path()+"/"+dirLev1.at(i)));
+            itemType->setText("Dir");
+            itemFileName->setIcon(QIcon(":/src/images/dir.png"));
         }
         if(info.isFile()) // 是文件
         {
-
             itemSize = new QStandardItem(fileSize(info.size()));
+            itemType->setText("File");
+            itemFileName->setIcon(QIcon(":/src/images/file.png"));
         }
-        QStandardItem *itemFileName = new QStandardItem(fileInfo->fileName());
         model->setItem(i,0,itemFileName);
-        model->setItem(i,1,itemDesc);
-        model->setItem(i,2,itemOwner);
-        model->setItem(i,3,itemModify);
-        model->setItem(i,4,itemSize);
+        model->setItem(i,1,itemType);
+        model->setItem(i,2,itemDesc);
+        model->setItem(i,3,itemOwner);
+        model->setItem(i,4,itemModify);
+        model->setItem(i,5,itemSize);
 
     }
 
@@ -196,3 +212,83 @@ QString QJDPropertyWidget::fileSize(qint64 size)
 
 }
 
+void QJDPropertyWidget::contextMenuEvent(QContextMenuEvent *)
+{
+    if(menu)
+    {
+        menu->exec(QCursor::pos());
+    }
+}
+
+void QJDPropertyWidget::mousePressEvent(QMouseEvent *event)
+{
+    QTableView::mousePressEvent(event);
+    QString fileName=this->selectedIndexes().at(0).data().toString();
+    currentPath=basePath+"/"+fileName;
+    qDebug()<<currentPath;
+
+}
+
+void QJDPropertyWidget::delFile()
+{
+    QMessageBox msgBox;
+     msgBox.setText(currentPath+" will be deleted");
+     msgBox.setInformativeText("Do you really want to delete it");
+     msgBox.setIcon(QMessageBox::Question);
+     msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+     msgBox.setDefaultButton(QMessageBox::No);
+     int ret = msgBox.exec();
+
+     QFileInfo f(currentPath);
+     switch (ret)
+     {
+     case QMessageBox::Yes:
+         // delete
+         if(f.isFile())
+         {
+             QFile::remove(f.filePath());
+         }
+         if(f.isDir())
+         {
+             deleteDirectory(f);
+         }
+
+         break;
+     case QMessageBox::No:
+         // Don't delete
+         return;
+         break;
+     default:
+         // should never be reached
+         break;
+     }
+}
+
+void QJDPropertyWidget::deleteDirectory(QFileInfo fileList)
+{
+
+    if(fileList.isDir())
+    {
+        int childCount =0;
+        QString dir = fileList.filePath();
+        QDir thisDir(dir);
+        childCount = thisDir.entryInfoList().count();
+        QFileInfoList newFileList = thisDir.entryInfoList();
+        if(childCount>2)
+        {
+            for(int i=0;i<childCount;i++)
+            {
+                if(newFileList.at(i).fileName().operator ==(".")|newFileList.at(i).fileName().operator ==(".."))
+                {
+                    continue;
+                }
+                deleteDirectory(newFileList.at(i));
+            }
+        }
+        fileList.absoluteDir().rmpath(fileList.fileName());
+    }
+    else if(fileList.isFile())
+    {
+        fileList.absoluteDir().remove(fileList.fileName());
+    }
+}

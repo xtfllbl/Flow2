@@ -16,7 +16,7 @@ public:
     
 signals:
     void sigRefreshClicked();
-    void sigExpandClicked();
+    void sigExpandClicked(int);
     void sigCollapseClicked();
 public slots:
 
@@ -24,13 +24,11 @@ private:
     QLabel *textLabel;
     QJDPushButton *refreshButton;
     QJDPushButton *expandButton;
-    QJDPushButton *collapseButton;
     QSpacerItem *horizontalSpacer;
 
 private slots:
     void emitSigRefresh();
-    void emitSigExpand();
-    void emitSigCollapse();
+    void emitSigExpand(bool);
 };
 
 #endif // QJDAREAHEADWIDGET_H

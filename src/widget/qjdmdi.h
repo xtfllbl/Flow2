@@ -40,7 +40,7 @@ private:
 public slots:
     void newSubWindow(QString subName,QString linePath);
     void showExistSubWindow(QString flowName,QString flowPath);
-    void addFlow(QString name,QString xmlPath);
+    void addFuncation(QString name,QString xmlPath);
     void excuteFlow(QString flowName);
 
     /// 中键单击,弹出编辑的窗口 QJDFunArguWidget
