@@ -22,7 +22,7 @@ QJDProcessWidget::QJDProcessWidget(QWidget *parent) :
 
     menuBar=new QMenuBar();
     tableWidget=new QJDProcessTableWidget();
-
+    tableWidget->setEditTriggers(0);
     // Menu "File"
     QMenu *fileMenu=new QMenu("File");
     QAction *actClearHistory=new QAction(this);
@@ -38,45 +38,26 @@ QJDProcessWidget::QJDProcessWidget(QWidget *parent) :
 
     // Menu "Action"
     QMenu *actionMenu=new QMenu("Action");
-//    QAction *actContinue=new QAction(this);
-//    actContinue->setText("Continue");
-//    actContinue->setIcon(QIcon(":/src/images/excute.png"));
-
-//    QAction *actStop=new QAction(this);
-//    actStop->setText("Stop");
-//    actStop->setIcon(QIcon(":/src/images/norun.png"));
-
-//    QAction *actPause=new QAction(this);
-//    actPause->setText("Pause");
-//    actPause->setIcon(QIcon(":/src/images/media-playback-stop.png"));
-
-//    QAction *actKill=new QAction(this);
-//    actKill->setText("Kill");
-//    actKill->setIcon(QIcon(":/src/images/gtk-no.png"));
-
     QAction *actTer=new QAction(this);
     actTer->setText("Terminate");
     actTer->setIcon(QIcon(":/src/images/process-stop.png"));
-
-//    actionMenu->addAction(actContinue);
-//    actionMenu->addAction(actStop);
-//    actionMenu->addAction(actPause);
-//    actionMenu->addAction(actKill);
     actionMenu->addAction(actTer);
 
+    QAction *actCheck=new QAction(this);
+    actCheck->setText("Manual Check Log Status");
+    actionMenu->addAction(actCheck);
+
     menuBar->addMenu(actionMenu);
-//    connect(actContinue,SIGNAL(triggered()),tableWidget,SLOT(conProcess()));
-//    connect(actStop,SIGNAL(triggered()),tableWidget,SLOT(stopProcess()));
-//    connect(actPause,SIGNAL(triggered()),tableWidget,SLOT(hanProcess()));
-//    connect(actKill,SIGNAL(triggered()),tableWidget,SLOT(killProcess()));
     connect(actTer,SIGNAL(triggered()),tableWidget,SLOT(terProcess()));
+    connect(actCheck,SIGNAL(triggered()),tableWidget,SLOT(checkLogStatus()));
 
     tableWidget->setSortingEnabled(false);
-    tableWidget->setColumnCount(6); // 否则设置抬头无效
+    tableWidget->setColumnCount(7); // 否则设置抬头无效
     tableWidget->setRowCount(1);
 
     QTableWidgetItem *itemName=new QTableWidgetItem("Flow Name");
-    QTableWidgetItem *itemStatus=new QTableWidgetItem("Status");
+    QTableWidgetItem *itemStatus=new QTableWidgetItem("Process Status");
+    QTableWidgetItem *itemLogStatus=new QTableWidgetItem("Log Status");
     QTableWidgetItem *itemStartTime=new QTableWidgetItem("Start Time");
     QTableWidgetItem *itemEndTime=new QTableWidgetItem("End Time");
     QTableWidgetItem *itemPID=new QTableWidgetItem("PID");
@@ -84,10 +65,11 @@ QJDProcessWidget::QJDProcessWidget(QWidget *parent) :
 
     tableWidget->setHorizontalHeaderItem(0,itemName);
     tableWidget->setHorizontalHeaderItem(1,itemStatus);
-    tableWidget->setHorizontalHeaderItem(2,itemPID);
-    tableWidget->setHorizontalHeaderItem(3,itemStartTime);
-    tableWidget->setHorizontalHeaderItem(4,itemEndTime);
-    tableWidget->setHorizontalHeaderItem(5,itemLog);
+    tableWidget->setHorizontalHeaderItem(2,itemLogStatus);
+    tableWidget->setHorizontalHeaderItem(3,itemPID);
+    tableWidget->setHorizontalHeaderItem(4,itemStartTime);
+    tableWidget->setHorizontalHeaderItem(5,itemEndTime);
+    tableWidget->setHorizontalHeaderItem(6,itemLog);
 
     qDebug()<<tableWidget->horizontalHeaderItem(0);
     QVBoxLayout *vLayout=new QVBoxLayout;
@@ -117,26 +99,30 @@ void QJDProcessWidget::addTask(QString pid,QString name,QString log)
     QTableWidgetItem *itemPID=new QTableWidgetItem;
     QString textPID=pid;
     itemPID->setText(textPID);
-    tableWidget->setItem(row,2,itemPID);
+    tableWidget->setItem(row,3,itemPID);
 
     QTableWidgetItem *itemStatus=new QTableWidgetItem;
     itemStatus->setText("Running");
     tableWidget->setItem(row,1,itemStatus);
 
+    QTableWidgetItem *itemLogStatus=new QTableWidgetItem;
+    itemLogStatus->setText("");
+    tableWidget->setItem(row,2,itemLogStatus);
+
     QTableWidgetItem *itemTime=new QTableWidgetItem;
     QDateTime ct;
     QString currentTime=ct.currentDateTime().toString("yyyy/MM/dd hh:mm:ss");
     itemTime->setText(currentTime);
-    tableWidget->setItem(row,3,itemTime);
+    tableWidget->setItem(row,4,itemTime);
 
     QTableWidgetItem *itemEndTime=new QTableWidgetItem;
     QString endTime="Not Finished";
     itemEndTime->setText(endTime);
-    tableWidget->setItem(row,4,itemEndTime);
+    tableWidget->setItem(row,5,itemEndTime);
 
     QTableWidgetItem *itemLog=new QTableWidgetItem;
     itemLog->setText(log);
-    tableWidget->setItem(row,5,itemLog);
+    tableWidget->setItem(row,6,itemLog);
 
     tableWidget->resizeColumnsToContents();
     hashRow.insert(pid.toInt(),row);
@@ -162,7 +148,7 @@ void QJDProcessWidget::changeStatus(int pid, int exitCode, QProcess::ExitStatus 
         QDateTime ct;
         QString currentTime=ct.currentDateTime().toString("yyyy/MM/dd hh:mm:ss");
         itemTime->setText(currentTime);
-        tableWidget->setItem(row,4,itemTime);
+        tableWidget->setItem(row,5,itemTime);
     }
     if(exitStatus==1)
     {
@@ -174,7 +160,30 @@ void QJDProcessWidget::changeStatus(int pid, int exitCode, QProcess::ExitStatus 
         QDateTime ct;
         QString currentTime=ct.currentDateTime().toString("yyyy/MM/dd hh:mm:ss");
         itemTime->setText(currentTime);
-        tableWidget->setItem(row,4,itemTime);
+        tableWidget->setItem(row,5,itemTime);
+    }
+
+    QTableWidgetItem *itemLogStatus=new QTableWidgetItem;
+    QTableWidgetItem *itemPath=tableWidget->item(row,6);
+    QFile logFile(itemPath->text());
+    if(!logFile.open(QFile::ReadOnly))
+        qDebug()<<"log file open failed";
+    QTextStream ts(&logFile);
+    QString all=ts.readAll();
+    if(all.contains("ERROR"))
+    {
+        itemLogStatus->setText("Error");
+        tableWidget->setItem(row,2,itemLogStatus);
+    }
+    if(all.contains("complete"))
+    {
+        itemLogStatus->setText("Complete");
+        tableWidget->setItem(row,2,itemLogStatus);
+    }
+    if(all.contains("terminate"))
+    {
+        itemLogStatus->setText("Terminated");
+        tableWidget->setItem(row,2,itemLogStatus);
     }
 
     tableWidget->resizeColumnsToContents();
@@ -258,7 +267,7 @@ void QJDProcessTableWidget::showLogSlot()
 
     for(int i=0;i<rows.size();i++)
     {
-        QTableWidgetItem *item=this->item(rows.at(i),5);
+        QTableWidgetItem *item=this->item(rows.at(i),6);
 
         textBrowser=new QJDTextBrowser();
         if(textBrowser->isVisible()==false)
@@ -309,12 +318,16 @@ void QJDProcessTableWidget::loadHistory()
     while(!ts.atEnd())
     {
         QString lineText=ts.readLine();
+        if(lineText=="")
+        {
+            return;
+        }
         QStringList lineTextList=lineText.split("|",QString::SkipEmptyParts);
         lineVector<<lineTextList;
 //        qDebug()<<lineTextList;
     }
 
-    this->setColumnCount(6);
+    this->setColumnCount(7);
     this->setRowCount(lineVector.size()+1);
 
     for(int i=0;i<lineVector.size();i++)
@@ -379,11 +392,11 @@ void QJDProcessTableWidget::clearHistorySlot()
     {
     case QMessageBox::Ok:
         qDebug()<<"start remove"<<rowCount();
-//        for(int i=rowCount()-1;i>=0;i--)
-//        for(int i=0;i<rowCount()-1;i++)
-//        {
-//            this->removeRow(0);
-//        }
+        for(int i=0;i<this->rowCount()-1;i++)
+        {
+            QFile file(this->item(i,6)->text());
+            file.remove();
+        }
         this->setRowCount(0);
         this->setRowCount(1);
         this->saveHistory();
@@ -439,7 +452,7 @@ void QJDProcessTableWidget::send_to_selected(int sig)
     for(int i=0;i<rows.size();i++)
     {
         // 这里没有hashRow了
-        processID_List.append(   this->item(rows.at(i),2)->text().toInt()   );
+        processID_List.append(   this->item(rows.at(i),3)->text().toInt()   );
     }
 
     // 完成信号传输
@@ -465,3 +478,35 @@ void QJDProcessTableWidget::sendsig(int pid, int sig)
         }
     }
 }
+
+void QJDProcessTableWidget::checkLogStatus()
+{
+    for(int i=0;i<this->rowCount()-1;i++)
+    {
+        QTableWidgetItem *itemLogStatus=new QTableWidgetItem;
+        QTableWidgetItem *itemPath=this->item(i,6);
+        QFile logFile(itemPath->text());
+        if(!logFile.open(QFile::ReadOnly))
+            qDebug()<<"log file open failed";
+        QTextStream ts(&logFile);
+        QString all=ts.readAll();
+        if(all.contains("ERROR"))
+        {
+            itemLogStatus->setText("Error");
+            this->setItem(i,2,itemLogStatus);
+        }
+        if(all.contains("complete"))
+        {
+            itemLogStatus->setText("Complete");
+            this->setItem(i,2,itemLogStatus);
+        }
+        if(all.contains("terminate"))
+        {
+            itemLogStatus->setText("Terminated");
+            this->setItem(i,2,itemLogStatus);
+        }
+    }
+    this->resizeColumnsToContents();
+    this->saveHistory();
+}
+

@@ -870,6 +870,7 @@ void QJDMainWindow::on_actionJob_Viewer_triggered()
 void QJDMainWindow::excuteDecide(QMdiSubWindow *w)
 {
 //    qDebug()<<"excuteDecide!!!!!"<<w;
+    // 关闭机制有问题
     if(w==0)
     {
         ui->actionExcuteFlow->setEnabled(false);

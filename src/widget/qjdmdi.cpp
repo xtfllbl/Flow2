@@ -556,7 +556,7 @@ void QJDMdi::runProcess(QString arg,QString name)
     QFile logFile(str);
     logFile.open(QFile::WriteOnly);
     QTextStream ts(&logFile);
-    ts<<str;
+    ts<<"complete";
     logFile.close();
 }
 
