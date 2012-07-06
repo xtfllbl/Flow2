@@ -64,6 +64,8 @@ QJDAreaWidget::QJDAreaWidget()
     connect(this,SIGNAL(sigLevel(int)),this,SLOT(setContextMenu(int)));
     this->setContextMenuPolicy(Qt::DefaultContextMenu);
 
+//    setLevel(0);
+
     // 由于这个信号,导致itemclicked右键接受不正常,被此处截取过去了,如何是好 !!!!!!!!!!!!!!!!!!!!!
     /// 难道显示了之后,选择了之后再判断?
     //    connect(this, SIGNAL(customContextMenuRequested(const QPoint&)),
@@ -131,11 +133,17 @@ void QJDAreaWidget::mousePressEvent(QMouseEvent *event)
     qDebug()<<"mousePressEvent"<<event->button();
     if(event->button()==Qt::LeftButton)
     {
-//        qDebug()<<"left button clicked";
-//        QTest::mouseClick(this,Qt::RightButton); //引入这个相当麻烦,不应当写入代码
+        if(this->selectedItems().count()==0)
+        {
+            setLevel(0);
+        }
     }
     if(event->button()==Qt::RightButton)
     {
+        if(this->selectedItems().count()==0)
+        {
+            setLevel(0);
+        }
 //        qDebug()<<"right button clicked";
 //        QTest::mouseClick(this,Qt::RightButton); //引入这个相当麻烦,不应当写入代码
     }
@@ -186,6 +194,10 @@ void QJDAreaWidget::returnPath(QTreeWidgetItem* item,int col)
     if(left.count(QRegExp("/"))==1)
     {
         setLevel(1);
+    }
+    if(left.count(QRegExp("/"))==0)
+    {
+        setLevel(0);
     }
 }
 
@@ -264,6 +276,25 @@ void QJDAreaWidget::setContextMenu(int lev)
         actNewLine->setEnabled(false);
         actNewFlow->setEnabled(false);
         actNewArea->setVisible(false);
+        actNewLine->setVisible(false);
+        actNewFlow->setVisible(false);
+
+        actDelArea->setEnabled(false);
+        actDelLine->setEnabled(false);
+        actDelFlow->setEnabled(false);
+        actDelArea->setVisible(false);
+        actDelLine->setVisible(false);
+        actDelFlow->setVisible(false);
+
+        actOpenFlow->setVisible(false);
+        actExcuteFlow->setVisible(false);
+    }
+    if(lev==0)
+    {
+        actNewArea->setEnabled(true);
+        actNewLine->setEnabled(false);
+        actNewFlow->setEnabled(false);
+        actNewArea->setVisible(true);
         actNewLine->setVisible(false);
         actNewFlow->setVisible(false);
 

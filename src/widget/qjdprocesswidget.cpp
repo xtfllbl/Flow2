@@ -322,7 +322,7 @@ void QJDProcessTableWidget::loadHistory()
         {
             return;
         }
-        QStringList lineTextList=lineText.split("|",QString::SkipEmptyParts);
+        QStringList lineTextList=lineText.split("|"/*,QString::SkipEmptyParts*/);
         lineVector<<lineTextList;
 //        qDebug()<<lineTextList;
     }

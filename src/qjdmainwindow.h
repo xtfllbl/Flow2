@@ -25,7 +25,8 @@ public:
     explicit QJDMainWindow(QWidget *parent = 0);
     ~QJDMainWindow();
     
-    void deleteDir(QFileInfo fileList);
+    bool deleteDir(QString);
+    bool deleteFile(const QString);
 
 private slots:
     void on_actionExit_triggered();
@@ -33,7 +34,7 @@ private slots:
     void on_actionNewArea_triggered();
     void on_actionNewLine_triggered();
     void on_actionNewFlow_triggered();
-    void on_actionSetDataHome_triggered();
+//    void on_actionSetDataHome_triggered();
 
     void showExistFlow();
 

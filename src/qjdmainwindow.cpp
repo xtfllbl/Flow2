@@ -62,7 +62,7 @@ QJDMainWindow::QJDMainWindow(QWidget *parent) :
 
     tabWidget=new QJDTabWidget();
     tabWidget->setIconSize(QSize(24,24));
-//    tabWidget->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Expanding);
+    //    tabWidget->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Expanding);
     QWidget *tab1=new QWidget;
     QGridLayout *gLayout1=new QGridLayout(tab1);
     gLayout1->addWidget(propertyWidget);
@@ -92,8 +92,8 @@ QJDMainWindow::QJDMainWindow(QWidget *parent) :
     splitter->addWidget(tabWidget);
     splitter->addWidget(funcationSplitterWidget);
 
-//    areaSplitterWidget->show();
-//    tabWidget->show();
+    //    areaSplitterWidget->show();
+    //    tabWidget->show();
     funcationSplitterWidget->hide();
 
     areaWidget->setHome(_HOME_DIR);
@@ -107,10 +107,10 @@ QJDMainWindow::QJDMainWindow(QWidget *parent) :
     pathLayout->addWidget(pathLabel1);
     pathLayout->addWidget(pathLabel2);
 
-//    QHBoxLayout *hLayout=new QHBoxLayout;
-//    hLayout->addWidget(areaWidget);
-//    hLayout->addWidget(tabWidget);
-//    hLayout->addWidget(functionWidget);
+    //    QHBoxLayout *hLayout=new QHBoxLayout;
+    //    hLayout->addWidget(areaWidget);
+    //    hLayout->addWidget(tabWidget);
+    //    hLayout->addWidget(functionWidget);
 
     QVBoxLayout *vLayout=new QVBoxLayout;
     vLayout->addLayout(pathLayout);
@@ -132,7 +132,7 @@ QJDMainWindow::QJDMainWindow(QWidget *parent) :
 
     // funcation
     connect(funcationWidget,SIGNAL(sigFunDoubleClicked(QString,QString)),mdiWidget,SLOT(addFuncation(QString,QString)));
-//    connect(funcationWidget,SIGNAL(sigFunDoubleClicked(QString,QString)),this,SLOT(copyFlowXML()));
+    //    connect(funcationWidget,SIGNAL(sigFunDoubleClicked(QString,QString)),this,SLOT(copyFlowXML()));
 
     // head
     connect(areaHeadWidget,SIGNAL(sigRefreshClicked()),this,SLOT(refreshList()));
@@ -142,8 +142,8 @@ QJDMainWindow::QJDMainWindow(QWidget *parent) :
     connect(funcationHeadWidget,SIGNAL(sigCollapseClicked()),funcationWidget,SLOT(collapseAll()));
 
     /// mdi
-//    connect(areaWidget,SIGNAL(),mdiWidget,SLOT(newSubWindow()));
-//    connect(funcationWidget,SIGNAL(),mdiWidget,SLOT(addFlow()));
+    //    connect(areaWidget,SIGNAL(),mdiWidget,SLOT(newSubWindow()));
+    //    connect(funcationWidget,SIGNAL(),mdiWidget,SLOT(addFlow()));
 
     // 必须添加流程后才能点击
     ui->actionExcuteFlow->setEnabled(false);
@@ -176,7 +176,7 @@ void QJDMainWindow::setHomeDir(QString homePath)
     dir1.setPath(homePath);
     QStringList dirLev1;
     dirLev1<<dir1.entryList(QDir::NoDotAndDotDot|QDir::Dirs);
-//    qDebug()<<dir1.count(); // 包含./..
+    //    qDebug()<<dir1.count(); // 包含./..
 
     /// 第二层 -- 线, 目前要向里面加入data文件夹,data文件夹与flow并列并且继续有往下的选择,可以不用descname
     QStringList areaStringList;
@@ -197,17 +197,22 @@ void QJDMainWindow::setHomeDir(QString homePath)
         dir2.setPath(dir2path);
         QStringList dirLev2;
         dirLev2=dir2.entryList(QDir::NoDotAndDotDot|QDir::Dirs);
-        areaPathList<<dir2path;
 
         // 解析 DescName -- 工区名称
         QFile file2;
         file2.setFileName(dir2path+"/DescName");
+        if(!file2.exists())
+        {
+            continue;
+        }
+        areaPathList<<dir2path;
+
         file2.open(QFile::ReadOnly);
         QTextStream stream2(&file2);
         QString areatmp=stream2.readAll();
         areatmp.chop(1);
         areaStringList<<areatmp;   // 路径就是dir2path
-//        qDebug()<<dir2path;
+        //        qDebug()<<dir2path;
         file2.close();
 
         /// 第三层 -- 流程/Data, 同一层的data文件夹需要特殊处理
@@ -218,18 +223,22 @@ void QJDMainWindow::setHomeDir(QString homePath)
             dir3.setPath(dir3path);
             QStringList dirLev3;
             dirLev3=dir3.entryList(QDir::NoDotAndDotDot|QDir::Dirs);  // 线名
-            linePathList<<dir3path;
 
             // 解析 DescName -- 线名称
             QFile file3;
             file3.setFileName(dir3path+"/DescName");
+            if(!file3.exists())
+            {
+                continue;
+            }
+            linePathList<<dir3path;
             file3.open(QFile::ReadOnly);
             QTextStream stream3(&file3);
             QString linetmp=stream3.readAll();
             linetmp.chop(1);
             lineStringList<<linetmp;
             file3.close();
-//            qDebug()<<"line::"<<lineStringList;
+            //            qDebug()<<"line::"<<lineStringList;
 
             /// 第四层 -- 具体流程
             flowStringList.resize(dirLev2.count());
@@ -250,13 +259,17 @@ void QJDMainWindow::setHomeDir(QString homePath)
                 // 解析 DescName -- 线名称
                 QFile file4;
                 file4.setFileName(dir4path+"/DescName");
+                if(!file4.exists())
+                {
+                    continue;
+                }
                 file4.open(QFile::ReadOnly);
                 QTextStream stream4(&file4);
                 QString flowtmp=stream4.readAll();
                 flowtmp.chop(1);
                 flowStringList[j]<<flowtmp;  // 只有在流程里才会有,其他的文件夹内不会有这个
                 file4.close();
-//                qDebug()<<"flow::"<<flowStringList;
+                //                qDebug()<<"flow::"<<flowStringList;
 
                 /// 第五层 -- 数据存放,不应当再像前面一样完全扫描了.需要列出文件类型目录即可
                 //! !! 如何准确放到某条线下面去,每条线都有,目前还是没有解决这个问题
@@ -272,7 +285,7 @@ void QJDMainWindow::setHomeDir(QString homePath)
                         dir5.setPath(dir4.path());
                         QStringList dirLev5;
                         dirLev5=dir5.entryList(QDir::NoDotAndDotDot|QDir::AllDirs);  // 文件名列表了
-//                        qDebug()<<dir4.path()<<"dirLev5::"<<dirLev5;  // 怎么是空的??
+                        //                        qDebug()<<dir4.path()<<"dirLev5::"<<dirLev5;  // 怎么是空的??
                         dataStringList[j][k].append(dirLev5);
                         /// 底下应当有个记录流程xml文件
 
@@ -283,12 +296,12 @@ void QJDMainWindow::setHomeDir(QString homePath)
                         }
                     }
                     // dataString为空 path为data descName的path
-//                    qDebug()<<"!!!!!!!!!!!!!!!!!!!!!!!!!!"<<dirLev4.count()<<dataStringList;
+                    //                    qDebug()<<"!!!!!!!!!!!!!!!!!!!!!!!!!!"<<dirLev4.count()<<dataStringList;
                 }
             }
         }
-//        qDebug()<<"\nstart set:::"<<areaStringList.at(i)<<lineStringList<<flowStringList;
-//        qDebug()<<"Data:::"<<dataStringList;
+        //        qDebug()<<"\nstart set:::"<<areaStringList.at(i)<<lineStringList<<flowStringList;
+        //        qDebug()<<"Data:::"<<dataStringList;
 
         setAreaWidget(areaStringList.at(i),areaPathList.at(i),lineStringList,
                       linePathList,flowStringList,flowPathList,dataStringList,dataPathList);
@@ -304,7 +317,7 @@ void QJDMainWindow::setHomeDir(QString homePath)
 
     if(!areaStringList.isEmpty())
     {
-//        qDebug()<<areaWidget->topLevelItem(0)->text(0);
+        //        qDebug()<<areaWidget->topLevelItem(0)->text(0);
         areaWidget->setCurrentItem(areaWidget->topLevelItem(0));
         areaWidget->returnPath(areaWidget->currentItem(),areaWidget->currentColumn());
     }
@@ -315,7 +328,7 @@ void QJDMainWindow::setAreaWidget(QString areaString, QString areaPath, QStringL
                                   QVector<QStringList> flowPathList,QVector<QVector<QStringList> > dataStringList,
                                   QVector<QVector<QStringList> > dataPathList)
 {
-//    qDebug()<<"setAreaWidget::"<<flowStringList<<flowPathList;
+    //    qDebug()<<"setAreaWidget::"<<flowStringList<<flowPathList;
     QTreeWidgetItem *areaItem = new QTreeWidgetItem;
     areaItem->setText(0,areaString);
     areaItem->setToolTip(0,areaPath);
@@ -349,9 +362,9 @@ void QJDMainWindow::setAreaWidget(QString areaString, QString areaPath, QStringL
                 QTreeWidgetItem *dataItem = new QTreeWidgetItem;
                 dataItem->setText(0,dataStringList[j][k].at(l));
                 dataItem->setToolTip(0,dataPathList[j][k].at(l));
-//                dataItem->setIcon(0,QIcon(":/src/images/flow.png"));
+                //                dataItem->setIcon(0,QIcon(":/src/images/flow.png"));
                 flowItem->addChild(dataItem);
-//                qDebug()<<lineStringList.count()<<j<<flowStringList[j].size()<<k<<dataStringList[k].size()<<l;
+                //                qDebug()<<lineStringList.count()<<j<<flowStringList[j].size()<<k<<dataStringList[k].size()<<l;
             }
         }
 
@@ -483,121 +496,118 @@ void QJDMainWindow::on_actionDelArea_triggered()
 {
     /// 需要添加确认选项
     QMessageBox msgBox;
-     msgBox.setText("This area will be deleted.");
-     msgBox.setInformativeText("Do you really want to delete this area?");
-     msgBox.setIcon(QMessageBox::Question);
-     msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-     msgBox.setDefaultButton(QMessageBox::No);
-     int ret = msgBox.exec();
+    msgBox.setText("This area will be deleted.");
+    msgBox.setInformativeText("Do you really want to delete this area?");
+    msgBox.setIcon(QMessageBox::Question);
+    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    msgBox.setDefaultButton(QMessageBox::No);
+    int ret = msgBox.exec();
 
-     QFileInfo f(areaWidget->getAbsolutePath());
-     switch (ret) {
-       case QMessageBox::Yes:
-         // delete
-         deleteDir(f);
-         break;
-       case QMessageBox::No:
-           // Don't delete
-         return;
-           break;
-       default:
-           // should never be reached
-           break;
-     }
+    switch (ret) {
+    case QMessageBox::Yes:
+        // delete
+        deleteDir(areaWidget->getAbsolutePath());
+        break;
+    case QMessageBox::No:
+        // Don't delete
+        return;
+        break;
+    default:
+        // should never be reached
+        break;
+    }
 
-     if(mdiWidget->subWindowList().size()!=0)
-     {
-         QString title=areaWidget->currentItem()->text(0);
-         QList<QString> valueList=mdiWidget->hashSubMdiName.values();
+    if(mdiWidget->subWindowList().size()!=0)
+    {
+        QString title=areaWidget->currentItem()->text(0);
+        QList<QString> valueList=mdiWidget->hashSubMdiName.values();
 
-         for(int i=0;i<valueList.size();i++)
-         {
-             QStringList trueValueList=valueList.at(i).split("::");  // 彻底防止误删
-             if(trueValueList.at(0).contains(title,Qt::CaseInsensitive))
-             {
-                 mdiWidget->removeSubWindow(mdiWidget->hashSubMdiName.key(valueList.at(i)));
-             }
-         }
-     }
+        for(int i=0;i<valueList.size();i++)
+        {
+            QStringList trueValueList=valueList.at(i).split("::");  // 彻底防止误删
+            if(trueValueList.at(0).contains(title,Qt::CaseInsensitive))
+            {
+                mdiWidget->removeSubWindow(mdiWidget->hashSubMdiName.key(valueList.at(i)));
+            }
+        }
+    }
 
-     areaWidget->removeCurrentArea();
+    areaWidget->removeCurrentArea();
 }
 
 void QJDMainWindow::on_actionDelLine_triggered()
 {
     QMessageBox msgBox;
-     msgBox.setText("This line will be deleted.");
-     msgBox.setInformativeText("Do you really want to delete this line?");
-     msgBox.setIcon(QMessageBox::Question);
-     msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-     msgBox.setDefaultButton(QMessageBox::No);
-     int ret = msgBox.exec();
-     QFileInfo f(areaWidget->getAbsolutePath());
+    msgBox.setText("This line will be deleted.");
+    msgBox.setInformativeText("Do you really want to delete this line?");
+    msgBox.setIcon(QMessageBox::Question);
+    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    msgBox.setDefaultButton(QMessageBox::No);
+    int ret = msgBox.exec();
 
-     switch (ret) {
-       case QMessageBox::Yes:
-         // delete
-         deleteDir(f);
-         break;
-       case QMessageBox::No:
-           // Don't delete
-         return;
-           break;
-       default:
-           // should never be reached
-           break;
-     }
+    switch (ret) {
+    case QMessageBox::Yes:
+        // delete
+        deleteDir(areaWidget->getAbsolutePath());
+        break;
+    case QMessageBox::No:
+        // Don't delete
+        return;
+        break;
+    default:
+        // should never be reached
+        break;
+    }
 
-     /// 需要删掉线下的所有窗口,如何找出来呢???
-     QString title=areaWidget->currentItem()->parent()->text(0)+"::"+
-             areaWidget->currentItem()->text(0);
-     QList<QString> valueList=mdiWidget->hashSubMdiName.values();
-//     qDebug()<<"???????"<<title<<valueList;  // 无问题
-     for(int i=0;i<valueList.size();i++)
-     {
-         if(valueList.at(i).contains(title,Qt::CaseInsensitive))
-         {
-             mdiWidget->removeSubWindow(mdiWidget->hashSubMdiName.key(valueList.at(i)));
-         }
-     }
+    /// 需要删掉线下的所有窗口,如何找出来呢???
+    QString title=areaWidget->currentItem()->parent()->text(0)+"::"+
+            areaWidget->currentItem()->text(0);
+    QList<QString> valueList=mdiWidget->hashSubMdiName.values();
+    //     qDebug()<<"???????"<<title<<valueList;  // 无问题
+    for(int i=0;i<valueList.size();i++)
+    {
+        if(valueList.at(i).contains(title,Qt::CaseInsensitive))
+        {
+            mdiWidget->removeSubWindow(mdiWidget->hashSubMdiName.key(valueList.at(i)));
+        }
+    }
 
-     areaWidget->removeCurrentLine_Flow();
+    areaWidget->removeCurrentLine_Flow();
 }
 
 void QJDMainWindow::on_actionDelFlow_triggered()
 {
     QMessageBox msgBox;
-     msgBox.setText("This flow will be deleted.");
-     msgBox.setInformativeText("Do you really want to delete this flow?");
-     msgBox.setIcon(QMessageBox::Question);
-     msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-     msgBox.setDefaultButton(QMessageBox::No);
-     int ret = msgBox.exec();
-     QFileInfo f(areaWidget->getAbsolutePath());
+    msgBox.setText("This flow will be deleted.");
+    msgBox.setInformativeText("Do you really want to delete this flow?");
+    msgBox.setIcon(QMessageBox::Question);
+    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    msgBox.setDefaultButton(QMessageBox::No);
+    int ret = msgBox.exec();
 
-     switch (ret) {
-       case QMessageBox::Yes:
-         // delete
-         deleteDir(f);
-         break;
-       case QMessageBox::No:
-           // Don't delete
-         return;
-           break;
-       default:
-           // should never be reached
-           break;
-     }
+    switch (ret) {
+    case QMessageBox::Yes:
+        // delete
+        deleteDir(areaWidget->getAbsolutePath());
+        break;
+    case QMessageBox::No:
+        // Don't delete
+        return;
+        break;
+    default:
+        // should never be reached
+        break;
+    }
 
-     // 这个流程如果已经打开的话,也需要在界面处进行关闭
-//     mdiWidget->removeSubWindow();
+    // 这个流程如果已经打开的话,也需要在界面处进行关闭
+    //     mdiWidget->removeSubWindow();
 
-     QString title=areaWidget->currentItem()->parent()->parent()->text(0)+"::"+
-             areaWidget->currentItem()->parent()->text(0)+"::"+areaWidget->currentItem()->text(0);
-//     qDebug()<<title;
-     mdiWidget->removeSubWindow(mdiWidget->hashSubMdiName.key(title));
+    QString title=areaWidget->currentItem()->parent()->parent()->text(0)+"::"+
+            areaWidget->currentItem()->parent()->text(0)+"::"+areaWidget->currentItem()->text(0);
+    //     qDebug()<<title;
+    mdiWidget->removeSubWindow(mdiWidget->hashSubMdiName.key(title));
 
-     areaWidget->removeCurrentLine_Flow();
+    areaWidget->removeCurrentLine_Flow();
 }
 
 
@@ -612,26 +622,26 @@ void QJDMainWindow::showExistFlow()
 
 }
 
-void QJDMainWindow::on_actionSetDataHome_triggered()
-{
-    qDebug()<<"setDataHome"; // 此处是否要判断目录是否正确??
-    QString homePath = QFileDialog::getExistingDirectory(this, tr("Choose Home Directory"),
-                                                    "/home",
-                                                    QFileDialog::ShowDirsOnly
-                                                    | QFileDialog::DontResolveSymlinks);
-    if(homePath!="")
-    {
-        setHomeDir(homePath);  // it works
-        settings.setValue("HOME",homePath);
-        _HOME_DIR=homePath;
-        areaWidget->setHome(_HOME_DIR);
-        areaWidget->expandToDepth(1);
-    }
-    else
-    {
-        qDebug()<<"set data home failed";
-    }
-}
+//void QJDMainWindow::on_actionSetDataHome_triggered()
+//{
+//    qDebug()<<"setDataHome"; // 此处是否要判断目录是否正确??
+//    QString homePath = QFileDialog::getExistingDirectory(this, tr("Choose Home Directory"),
+//                                                         "/home",
+//                                                         QFileDialog::ShowDirsOnly
+//                                                         | QFileDialog::DontResolveSymlinks);
+//    if(homePath!="")
+//    {
+//        setHomeDir(homePath);  // it works
+//        settings.setValue("HOME",homePath);
+//        _HOME_DIR=homePath;
+//        areaWidget->setHome(_HOME_DIR);
+//        areaWidget->expandToDepth(1);
+//    }
+//    else
+//    {
+//        qDebug()<<"set data home failed";
+//    }
+//}
 
 QString QJDMainWindow::getHomeDir()
 {
@@ -822,32 +832,87 @@ void QJDMainWindow::on_actionExcuteFlow_triggered()
 }
 
 /// 删除非空目录
-void QJDMainWindow::deleteDir(QFileInfo fileList)
+//void QJDMainWindow::deleteDir(QFileInfo fileList)
+//{
+//    qDebug()<<"QJDMainWindow::deleteDir"<<fileList.absoluteFilePath();
+//    if(fileList.isDir())
+//    {
+//        int childCount =0;
+//        QString dir = fileList.filePath();
+//        QDir thisDir(dir);
+//        childCount = thisDir.entryInfoList().count();
+//        QFileInfoList newFileList = thisDir.entryInfoList();
+//        if(childCount>2)
+//        {
+//            for(int i=0;i<childCount;i++)
+//            {
+//                if(newFileList.at(i).fileName().operator ==(".")|newFileList.at(i).fileName().operator ==(".."))
+//                {
+//                    continue;
+//                }
+//                deleteDir(newFileList.at(i));
+//            }
+//        }
+//        fileList.absoluteDir().rmpath(fileList.fileName());
+//    }
+//    else if(fileList.isFile())
+//    {
+//        fileList.absoluteDir().remove(fileList.fileName());
+//    }
+//}
+
+bool QJDMainWindow::deleteDir(const QString dirName)
 {
-    if(fileList.isDir())
-    {
-        int childCount =0;
-        QString dir = fileList.filePath();
-        QDir thisDir(dir);
-        childCount = thisDir.entryInfoList().count();
-        QFileInfoList newFileList = thisDir.entryInfoList();
-        if(childCount>2)
-        {
-            for(int i=0;i<childCount;i++)
-            {
-                if(newFileList.at(i).fileName().operator ==(".")|newFileList.at(i).fileName().operator ==(".."))
-                {
-                    continue;
-                }
-                deleteDir(newFileList.at(i));
-            }
+    QDir directory(dirName);
+
+    if (!directory.exists()) {
+        return true;
+    }
+
+    QStringList dirs = directory.entryList(QDir::Dirs | QDir::Hidden);
+    QStringList files = directory.entryList(QDir::Files | QDir::Hidden);
+
+    QList<QString>::iterator f = files.begin();
+    QList<QString>::iterator d = dirs.begin();
+
+    bool error = false;
+
+    for (; f != files.end(); ++f) {
+        if (!deleteFile(directory.path() + '/' + (*f))) {
+            error = true;
         }
-        fileList.absoluteDir().rmpath(fileList.fileName());
     }
-    else if(fileList.isFile())
-    {
-        fileList.absoluteDir().remove(fileList.fileName());
+
+    for (; d != dirs.end(); ++d) {
+        if ((*d) == "." || (*d) == "..") {
+            continue;
+        }
+
+        if (!deleteDir(directory.path() + '/' + (*d))) {
+            error = true;
+        }
     }
+
+#ifdef QT_DEBUG
+    std::cout << "delete dir: " << directory.path().toStdString() << std::endl;
+#endif
+    if(!directory.rmdir(directory.path())) {
+        error = true;
+    }
+
+    return !error;
+
+}
+
+bool QJDMainWindow::deleteFile(const QString fileName)
+{
+        if (fileName.size() < 1) {
+            return true;
+        }
+
+        QFile file(fileName);
+
+        return file.remove();
 }
 
 void QJDMainWindow::openFlowSlot()
@@ -869,12 +934,12 @@ void QJDMainWindow::on_actionJob_Viewer_triggered()
 
 void QJDMainWindow::excuteDecide(QMdiSubWindow *w)
 {
-//    qDebug()<<"excuteDecide!!!!!"<<w;
+    //    qDebug()<<"excuteDecide!!!!!"<<w;
     // 关闭机制有问题
     if(w==0)
     {
         ui->actionExcuteFlow->setEnabled(false);
-//        tabWidget->setCurrentIndex(0);
+        //        tabWidget->setCurrentIndex(0);
     }
     else
     {

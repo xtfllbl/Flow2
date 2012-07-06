@@ -34,7 +34,6 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionSetDataHome"/>
     <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuView">
@@ -57,7 +56,6 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionExcuteFlow"/>
-   <addaction name="actionSetDataHome"/>
    <addaction name="actionJob_Viewer"/>
    <addaction name="actionExit"/>
   </widget>
@@ -79,15 +77,6 @@
   <action name="actionNewArea">
    <property name="text">
     <string>New Area</string>
-   </property>
-  </action>
-  <action name="actionSetDataHome">
-   <property name="icon">
-    <iconset resource="../images.qrc">
-     <normaloff>:/src/images/sethome.png</normaloff>:/src/images/sethome.png</iconset>
-   </property>
-   <property name="text">
-    <string>Set Data Home</string>
    </property>
   </action>
   <action name="actionExcuteFlow">
