@@ -361,6 +361,15 @@ void QJDFunArguWidget::finishCreatUI()
     setLayout(finalLayout);
 }
 
+void QJDFunArguWidget::keyPressEvent(QKeyEvent *ev)
+{
+    QWidget::keyPressEvent(ev);
+    if(ev->key() == Qt::Key_Return || ev->key() == Qt::Key_Enter)
+    {
+        saveArgToXml();
+    }
+}
+
 // 貌似propertyName不需要
 void QJDFunArguWidget::changeDisplayValue(int propertyListInt ,QStringList changeList)
 {

@@ -1,0 +1,5 @@
+#### 说明 ####
+1. 修改jdflow脚本,修改数据目录,程序目录以及数据类型
+2. 添加新模块,可用的控件为fileread,filesave,filechooseread,filechoosesave,lineedit,spinbox,checkbox,combobox,filecombobox,radiobutton.
+	目录为 fun/modules/ 下, 请先在 fun/index.xml 中添加相应字段 
+

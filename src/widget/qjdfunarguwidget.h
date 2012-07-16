@@ -47,6 +47,8 @@ private:
                          ,QString optionstring);
     void finishCreatUI();
     bool write();
+    void keyPressEvent( QKeyEvent * );
+
 
 private slots:
     void changeDisplayValue(int propertyListInt ,QStringList changeList);
